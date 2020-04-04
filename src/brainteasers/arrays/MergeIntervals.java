@@ -1,3 +1,5 @@
+package brainteasers.arrays;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -40,53 +42,53 @@ public class MergeIntervals {
 
     public static void main(String[] args) {
         // start and end in different existing intervals
-//        System.out.println(insert(new ArrayList<>(Arrays.asList(
-//                new Interval(1, 2),
-//                new Interval(3, 5),
-//                new Interval(6, 7),
-//                new Interval(8, 10),
-//                new Interval(12, 16)
-//        )), new Interval(4, 9))); //[(1, 2), (3, 10), (12, 16)]
-//
-//        // end not in any existing interval
-//        System.out.println(insert(new ArrayList<>(Arrays.asList(
-//                new Interval(1, 2),
-//                new Interval(3, 5),
-//                new Interval(8, 10),
-//                new Interval(12, 16)
-//        )), new Interval(4, 7))); // [(1, 2), (3, 7), (8, 10), (12, 16)]
-//
-//        // start not in any existing interval
-//        System.out.println(insert(new ArrayList<>(Arrays.asList(
-//                new Interval(1, 2),
-//                new Interval(3, 5),
-//                new Interval(8, 10),
-//                new Interval(12, 16)
-//        )), new Interval(6, 9))); // [(1, 2), (3, 5), (6, 10), (12, 16)]
-//
-//        // neither start nor end in any existing interval
-//        System.out.println(insert(new ArrayList<>(Arrays.asList(
-//                new Interval(1, 2),
-//                new Interval(3, 5),
-//                new Interval(8, 10),
-//                new Interval(12, 16)
-//        )), new Interval(6, 7))); // [(1, 2), (3, 5), (6, 7), (8, 10), (12, 16)]
-//
-//
-//        System.out.println(insert(new ArrayList<>(Arrays.asList(
-//                new Interval(1, 2),
-//                new Interval(3, 6)
-//        )), new Interval(8, 10))); // [(1, 2), (3, 6), (8, 10)]
-//
-//        System.out.println(insert(new ArrayList<>(Arrays.asList(
-//                new Interval(3, 6),
-//                new Interval(8, 10)
-//        )), new Interval(1, 2))); // [(1, 2), (3, 6), (8, 10)]
-//
-//        System.out.println(insert(new ArrayList<>(Arrays.asList(
-//                new Interval(3, 5),
-//                new Interval(8, 10)
-//        )), new Interval(1, 12))); // [(1, 12)]
+        System.out.println(insert(new ArrayList<>(Arrays.asList(
+                new Interval(1, 2),
+                new Interval(3, 5),
+                new Interval(6, 7),
+                new Interval(8, 10),
+                new Interval(12, 16)
+        )), new Interval(4, 9))); //[(1, 2), (3, 10), (12, 16)]
+
+        // end not in any existing interval
+        System.out.println(insert(new ArrayList<>(Arrays.asList(
+                new Interval(1, 2),
+                new Interval(3, 5),
+                new Interval(8, 10),
+                new Interval(12, 16)
+        )), new Interval(4, 7))); // [(1, 2), (3, 7), (8, 10), (12, 16)]
+
+        // start not in any existing interval
+        System.out.println(insert(new ArrayList<>(Arrays.asList(
+                new Interval(1, 2),
+                new Interval(3, 5),
+                new Interval(8, 10),
+                new Interval(12, 16)
+        )), new Interval(6, 9))); // [(1, 2), (3, 5), (6, 10), (12, 16)]
+
+        // neither start nor end in any existing interval
+        System.out.println(insert(new ArrayList<>(Arrays.asList(
+                new Interval(1, 2),
+                new Interval(3, 5),
+                new Interval(8, 10),
+                new Interval(12, 16)
+        )), new Interval(6, 7))); // [(1, 2), (3, 5), (6, 7), (8, 10), (12, 16)]
+
+
+        System.out.println(insert(new ArrayList<>(Arrays.asList(
+                new Interval(1, 2),
+                new Interval(3, 6)
+        )), new Interval(8, 10))); // [(1, 2), (3, 6), (8, 10)]
+
+        System.out.println(insert(new ArrayList<>(Arrays.asList(
+                new Interval(3, 6),
+                new Interval(8, 10)
+        )), new Interval(1, 2))); // [(1, 2), (3, 6), (8, 10)]
+
+        System.out.println(insert(new ArrayList<>(Arrays.asList(
+                new Interval(3, 5),
+                new Interval(8, 10)
+        )), new Interval(1, 12))); // [(1, 12)]
 
         System.out.println(insert(new ArrayList<>(Arrays.asList(
                 new Interval(1, 2),

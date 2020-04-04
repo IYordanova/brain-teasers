@@ -1,3 +1,5 @@
+package brainteasers.arrays;
+
 public class UniquePathsGrid {
 
     private static int numberOfPaths(int m, int n) {

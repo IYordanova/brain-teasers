@@ -1,3 +1,5 @@
+package brainteasers.strings;
+
 public class AddFrontToMakePalindrome {
 
     private static int solve(String A) {

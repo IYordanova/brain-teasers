@@ -1,3 +1,5 @@
+package brainteasers.strings;
+
 public class ZIgZagString {
 
     private static String printZigZagConcat(String A, int B) {

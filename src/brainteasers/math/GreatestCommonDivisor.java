@@ -1,3 +1,5 @@
+package brainteasers.math;
+
 public class GreatestCommonDivisor {
 
     private static int findGCD(int A, int B) {

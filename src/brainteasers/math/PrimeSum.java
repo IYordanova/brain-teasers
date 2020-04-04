@@ -1,3 +1,5 @@
+package brainteasers.math;
+
 import java.util.*;
 import java.util.stream.IntStream;
 

@@ -1,3 +1,5 @@
+package brainteasers.strings;
+
 public class PalindromeInteger {
 
     private static boolean isPalindrome(int A) {

@@ -1,3 +1,5 @@
+package brainteasers.strings;
+
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -42,11 +44,9 @@ public class PrettyJson {
                 line.append(ch);
             }
         }
-        ArrayList<String> a = lines
-                .stream()
+        return lines.stream()
                 .filter(l -> l.trim().length() != 0)
                 .collect(Collectors.toCollection(ArrayList::new));
-        return a;
     }
 
     private static StringBuilder startNewLine(ArrayList<String> lines, StringBuilder line) {
@@ -57,9 +57,7 @@ public class PrettyJson {
     }
 
     private static void addIndentation(StringBuilder str, int numIndent) {
-        for(int i = 0; i < numIndent; i++) {
-            str.append(indentation);
-        }
+        str.append(indentation.repeat(Math.max(0, numIndent)));
     }
 
 

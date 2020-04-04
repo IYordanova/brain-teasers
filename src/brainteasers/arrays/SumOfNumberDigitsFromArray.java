@@ -1,6 +1,9 @@
+package brainteasers.arrays;
+
 import java.util.ArrayList;
 
 public class SumOfNumberDigitsFromArray {
+
     public static int solve(ArrayList<Integer> A, int B, int C) {
         String str = Integer.toString(C);
         int cl = str.length();
@@ -42,14 +45,12 @@ public class SumOfNumberDigitsFromArray {
                 d2 = lower[digit];
                 dp[i] = dp[i - 1] * d;
 
-                // For first index we can't use 0
                 if (i == 1 && A.get(0) == 0 && B != 1)
                     d2 = d2 - 1;
 
-                //Whether (i-1) digit of generated number can be equal to (i - 1) digit of C.
-                if (flag)
+                if (flag) {
                     dp[i] += d2;
-                //Is digit[i - 1] present in A ?
+                }
                 flag = flag & (lower[digit + 1] == lower[digit] + 1);
             }
             return dp[B];

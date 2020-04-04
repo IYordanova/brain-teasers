@@ -1,3 +1,5 @@
+package brainteasers.arrays;
+
 import java.util.*;
 
 public class ZeroMatrixRowColWhereZero {

@@ -1,3 +1,5 @@
+package brainteasers.math;
+
 public class SqrtFormulaImplNoLib {
 
     private static int sqrt(int A) {
