@@ -19,10 +19,10 @@ public class InsertionSortLinkedList {
 
 
     private static ListNode insertionSortList(ListNode A) {
-        ListNode current = A;
+        ListNode head = A;
         ListNode tail = null;
-        while (current != null && tail != A) {
-            ListNode next = current;
+        while (head != null && tail != A) {
+            ListNode next = head;
             for (; next.next != tail; next = next.next) {
                 if (next.val >= next.next.val) {
                     int temp = next.val;
@@ -31,7 +31,7 @@ public class InsertionSortLinkedList {
                 }
             }
             tail = next;
-            current = A;
+            head = A;
         }
         return A;
     }
