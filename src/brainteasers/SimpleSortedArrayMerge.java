@@ -35,7 +35,7 @@ public class SimpleSortedArrayMerge {
             pos1 += 1;
         }
 
-        return new Triple(result, pos1, pos2);
+        return new Triple<>(result, pos1, pos2);
     }
 
 
