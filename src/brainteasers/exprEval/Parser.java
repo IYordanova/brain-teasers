@@ -1,5 +1,7 @@
 package brainteasers.exprEval;
 
+import brainteasers.exprEval.operators.Operators;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,21 +38,21 @@ public class Parser {
 
         if (key.matches(SYMBOL_PATTERN)) {
             String strValue = value.toString();
-            if (!strValue.isBlank() && (strValue.matches(DECIMAL_PATTERN) || Operators.isKnownOperator(strValue))) {
+            if (!strValue.isEmpty() && (strValue.matches(DECIMAL_PATTERN) || Operators.isKnownOperator(strValue))) {
                 return i;
             }
             if (Operators.isKnownOperator(key) || braces.contains(key)) {
                 if (key.equals("-") && (i == 0 || chars.get(i - 1).equals('('))) {
                     value.append(key);
                     return parse(chars, value, i + 1); // negative numbers
-                } else if (key.equals(")") && !strValue.isBlank()) {
+                } else if (key.equals(")") && !strValue.isEmpty()) {
                     return i;
                 } else {
                     value.append(key);
                     return i + 1;
                 }
             } else {
-                throw new RuntimeException("Invalid mathematical expression.");
+                throw new RuntimeException();
             }
         } else if (Character.isDigit(c) || c == '.') {
             value.append(c);

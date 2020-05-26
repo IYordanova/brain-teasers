@@ -1,12 +1,12 @@
-package brainteasers.exprEval;
+package brainteasers.exprEval.operators;
 
 import java.util.function.Function;
 
 public class UnaryOperator implements Operator {
     private final int priority;
-    public final Function<Double, Double> executor;
+    private final Function<Double, Double> executor;
 
-    public UnaryOperator(int priority, Function<Double, Double> executor) {
+    UnaryOperator(int priority, Function<Double, Double> executor) {
         this.priority = priority;
         this.executor = executor;
     }
@@ -14,5 +14,10 @@ public class UnaryOperator implements Operator {
     @Override
     public int getPriority() {
         return priority;
+    }
+
+    @Override
+    public Double execute(Double a){
+        return executor.apply(a);
     }
 }

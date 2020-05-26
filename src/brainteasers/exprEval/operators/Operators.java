@@ -1,6 +1,9 @@
-package brainteasers.exprEval;
+package brainteasers.exprEval.operators;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Operators {
 
@@ -21,8 +24,13 @@ public class Operators {
             "cot", new UnaryOperator(3, a -> 1.0 / Math.tan(Math.toRadians(a)))
     );
 
+    private final static Set<String> opNames = Stream.concat(
+            binaryOperators.keySet().stream(),
+            unaryOperators.keySet().stream()
+    ).collect(Collectors.toSet());
+
     public static boolean isKnownOperator(String op) {
-        return binaryOperators.containsKey(op) || unaryOperators.containsKey(op);
+        return opNames.contains(op);
     }
 
     public static int getPriority(String op) {
