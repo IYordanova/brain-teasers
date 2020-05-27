@@ -1,6 +1,7 @@
-package brainteasers;
+package tevalcourse.mergeArrs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SimpleSortedArrayMerge {
@@ -17,7 +18,7 @@ public class SimpleSortedArrayMerge {
         }
     }
 
-    private static Triple<Integer, Integer, Integer> pickMinAndAdvance(int [] array1, int [] array2, int pos1, int pos2) {
+    private static Triple<Integer, Integer, Integer> pickMinAndAdvance(int[] array1, int[] array2, int pos1, int pos2) {
         int result;
         if (pos1 < array1.length && pos2 < array2.length) {
             if (array1[pos1] < array2[pos2]) {
@@ -39,7 +40,7 @@ public class SimpleSortedArrayMerge {
     }
 
 
-    private static List<Integer> merge(int[] array1, int [] array2) {
+    private static List<Integer> merge(int[] array1, int[] array2) {
         int pos1 = 0;
         int pos2 = 0;
         List<Integer> result = new ArrayList<>();
@@ -52,11 +53,28 @@ public class SimpleSortedArrayMerge {
         return result;
     }
 
-
+    private static List<Integer> mergeKArrays(int arr[][]) {
+        List<Integer> output = new ArrayList<>();
+        int c = 0;
+        for (int[] ints : arr) {
+            for (int anInt : ints) {
+                output.add(c++, anInt);
+            }
+        }
+        System.out.println(Arrays.asList(output));
+        return output;
+//        sort(output, output + n * a);
+    }
 
 
     public static void main(String[] args) {
-        System.out.println(merge(new int[]{1, 2, 3, 4}, new int[] {2, 3, 4, 5, 6}));
+        System.out.println(merge(new int[]{1, 2, 3, 4}, new int[]{2, 3, 4, 5, 6}));
+        int arr[][] =  new int [][]{
+            new int[] {2, 6, 12, 34},
+            new int[] {1, 9, 20, 1000},
+            new int[] {23, 34, 90, 2000}
+        };
+        mergeKArrays(arr);
 
     }
 
