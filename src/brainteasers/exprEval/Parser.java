@@ -11,7 +11,7 @@ public class Parser {
     private final static List<String> braces = List.of("(", ")");
     private final static String SYMBOL_PATTERN = "[^A-Za-z0-9.]";
 
-    public final static String DECIMAL_PATTERN = "-*[0-9.]+";
+    public final static String DECIMAL_PATTERN = "-*[0-9.eE]+";
 
 
     public List<Object> parseLexemes(String input) {
@@ -52,12 +52,12 @@ public class Parser {
                     return i + 1;
                 }
             } else {
-                throw new RuntimeException();
+                throw new RuntimeException("Unknown operator encountered: " + key);
             }
         } else if (Character.isDigit(c) || c == '.' || Character.isLetter(c)) {
             value.append(c);
             return parse(chars, value, i + 1);
         }
-        throw new RuntimeException("a");
+        throw new RuntimeException("Unknown case encountered: " + key);
     }
 }

@@ -13,7 +13,12 @@ public class Evaluator {
     private final DecimalFormat df = new DecimalFormat("0.00");
     private final static String ERROR_MESSAGE = "Invalid mathematical expression.";
 
+
     public String evaluate(String input) {
+        if (input == null || input.trim().equals("null")) {
+            return ERROR_MESSAGE;
+        }
+
         try {
             List<Object> lexemes = parser.parseLexemes(input);
 
@@ -26,7 +31,7 @@ public class Evaluator {
             if (args.size() == 1) {
                 Double result = args.pop();
                 if (!result.isInfinite() && !result.isNaN()) {
-                    return  df.format(result);
+                    return df.format(result);
                 }
             }
         } catch (Exception e) {
@@ -43,7 +48,7 @@ public class Evaluator {
             Double result;
             if (Operators.isBinary(op)) {
                 if (args.isEmpty()) {
-                    throw new RuntimeException();
+                    throw new RuntimeException("Missing second arg for a binary operation.");
                 }
                 Double a = args.pop();
                 result = Operators.get(op).execute(a, b);
