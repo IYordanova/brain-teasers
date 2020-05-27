@@ -24,11 +24,20 @@ public class ExpressionEvaluation {
 //            put("(12 +3)* 2 - 6(19 -2)", errorMessage);
 //            put("(12 +3)* 2 - 6*(19 -2", errorMessage);
 //            put("(12 +3)* 2 - 6*19 -2)", errorMessage);
-//            put(Double.MAX_VALUE + " + 1.01", "1.01");
-            put(Double.MIN_VALUE + " - 1.01", "-1.01");
-//            put(Float.MAX_VALUE + " + 1.01", "1.01");
-            put(Float.MIN_VALUE + " - 1.01", "-1.01");
+//            put("sqrt(cos(120))", errorMessage);
+//            put("12-(2+3(98 - (7+7))", errorMessage);
+//            put("12-", errorMessage);
+//            put("12--1", errorMessage);
+//            put("12-(2+3))", errorMessage);
+//            put("12-(2+(3", errorMessage);
+//            put("12-2+3))", errorMessage);
+            put("12-2,00", errorMessage);
 
+//            put(Double.MAX_VALUE + " + 1.01", "1.01");
+//            put(Double.MIN_VALUE + " - 1.01", "-1.01");
+//            put(Float.MAX_VALUE + " + 1.01", "1.01");
+//            put(Float.MIN_VALUE + " - 1.01", "-1.01");
+//
 //            put("21", "21.00");
 //            put("-323", "-323.00");
 //            put("-323.923", "-323.92");
@@ -59,10 +68,10 @@ public class ExpressionEvaluation {
 //            put("(2)^(-3)", "0.12");
 //            put("9 + abs(-11) * 2 + (1 + (-2)) * 3", "28.00");
 //            put("sqrt(abs(-146 + 2))", "12.00");
-//            put("sqrt(cos(120))", "Invalid mathematical expression");
 //            put("abs(2.2-(3*2))", "3.80");
 //
 //            put("-12.324 + 123414.4442*1+(23.5-23.112532141421*(213.2 +23123.44214))", "-415943.27");
+//            put("12-(2+3)()", "7.00"); // ????
         }};
 
 

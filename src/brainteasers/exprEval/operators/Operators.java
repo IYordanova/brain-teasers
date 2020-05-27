@@ -12,7 +12,8 @@ public class Operators {
             "-", new BinaryOperator(1, (a, b) -> a - b),
             "*", new BinaryOperator(2, (a, b) -> a * b),
             "/", new BinaryOperator(2, (a, b) -> (a) / b),
-            "^", new BinaryOperator(3, Math::pow)
+            "^", new BinaryOperator(3, Math::pow),
+            "E", new BinaryOperator(3, (a, b) -> a * Math.pow(10, b))
     );
 
     private final static Map<String, Operator> unaryOperators = Map.of(
