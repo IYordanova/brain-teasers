@@ -16,8 +16,8 @@ public class Operators {
     );
 
     private final static Map<String, Operator> unaryOperators = Map.of(
-            "abs", new UnaryOperator(4, Math::abs),
-            "sqrt", new UnaryOperator(4, Math::sqrt),
+            "sqrt", new UnaryOperator(3, Math::sqrt),
+            "abs", new UnaryOperator(3, Math::abs),
             "sin", new UnaryOperator(3, a -> Math.sin(Math.toRadians(a))),
             "cos", new UnaryOperator(3, a -> Math.cos(Math.toRadians(a))),
             "tan", new UnaryOperator(3, a -> Math.tan(Math.toRadians(a))),

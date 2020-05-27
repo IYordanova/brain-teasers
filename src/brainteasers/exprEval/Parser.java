@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public class Parser {
 
     private final static List<String> braces = List.of("(", ")");
-    private final static String SYMBOL_PATTERN = "[^A-Za-z0-9]";
+    private final static String SYMBOL_PATTERN = "[^A-Za-z0-9.]";
 
     public final static String DECIMAL_PATTERN = "-*[0-9.]+";
 
@@ -54,10 +54,7 @@ public class Parser {
             } else {
                 throw new RuntimeException();
             }
-        } else if (Character.isDigit(c) || c == '.') {
-            value.append(c);
-            return parse(chars, value, i + 1);
-        } else if (Character.isLetter(c)) {
+        } else if (Character.isDigit(c) || c == '.' || Character.isLetter(c)) {
             value.append(c);
             return parse(chars, value, i + 1);
         }

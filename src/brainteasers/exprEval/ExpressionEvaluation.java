@@ -7,6 +7,7 @@ public class ExpressionEvaluation {
         Evaluator evaluator = new Evaluator();
 
 //        System.out.println(evaluator.evaluate(null));
+//        System.out.println(evaluator.evaluate("-"));
 //        System.out.println(evaluator.evaluate("djkfsdf"));
 //        System.out.println(evaluator.evaluate("(+2) + 3"));
 //        System.out.println(evaluator.evaluate("9+-"));
@@ -38,13 +39,22 @@ public class ExpressionEvaluation {
 //
 //        System.out.println(evaluator.evaluate("2 * 2^3 + (12 - 7)")); // 21
 //        System.out.println(evaluator.evaluate("2 * 2^3 + (12 - 7) * cos(90)")); // 16
-
-        System.out.println(evaluator.evaluate("((2 + 2^3*(2-1))*2 + 2) + (sin(45)-abs(-2)*3)")); // 16.85
-
+//
+//        System.out.println(evaluator.evaluate("((2 + 2^3*(2-(-1)))*2 + 2)")); // 54
+//        System.out.println(evaluator.evaluate("((2 + 2^3*(2-1))*2 + 2) + (sin(45)-abs(-2)*3)")); // 16.71
+//
 //        System.out.println(evaluator.evaluate("2 * sqrt(9) + 19")); // 25
 //
 //        System.out.println(evaluator.evaluate("9 + abs(-11) * 2 + (1 + 2) * 3")); // 40
 //        System.out.println(evaluator.evaluate("9 + abs(-11) * 2 + (1 + (-2)) * 3")); // 28
+//
+//        System.out.println(evaluator.evaluate("(-2)^3"));
+//        System.out.println(evaluator.evaluate("(2)^(-3)"));
+
+//        System.out.println(evaluator.evaluate("sqrt(abs(-146 + 2))"));
+//        System.out.println(evaluator.evaluate("sqrt(cos(120))"));
+
+        System.out.println(evaluator.evaluate("abs(2.2-(3*2))"));
     }
 
 }
