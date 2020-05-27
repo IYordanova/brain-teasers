@@ -1,4 +1,4 @@
-package brainteasers.exprEval.operators;
+package tevalcourse.exprEval.operators;
 
 public interface Operator {
 

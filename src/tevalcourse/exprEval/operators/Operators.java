@@ -1,4 +1,4 @@
-package brainteasers.exprEval.operators;
+package tevalcourse.exprEval.operators;
 
 import java.util.Map;
 import java.util.Set;

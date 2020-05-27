@@ -1,6 +1,6 @@
-package brainteasers.exprEval;
+package tevalcourse.exprEval;
 
-import brainteasers.exprEval.operators.Operators;
+import tevalcourse.exprEval.operators.Operators;
 
 import java.util.ArrayList;
 import java.util.List;

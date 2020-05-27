@@ -1,4 +1,4 @@
-package brainteasers.exprEval.operators;
+package tevalcourse.exprEval.operators;
 
 import java.util.function.Function;
 

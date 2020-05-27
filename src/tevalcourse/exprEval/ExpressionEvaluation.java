@@ -1,4 +1,4 @@
-package brainteasers.exprEval;
+package tevalcourse.exprEval;
 
 import java.util.HashMap;
 import java.util.Map;
