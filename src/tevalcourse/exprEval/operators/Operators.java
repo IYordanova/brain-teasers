@@ -55,7 +55,11 @@ public class Operators {
     ).collect(Collectors.toSet());
 
     public static boolean isExecutableOperator(String op) {
-        return opNames.contains(op);
+        if(opNames.contains(op)) {
+            return get(op).isExecutable();
+        } else {
+            return false;
+        }
     }
 
     public static boolean isBraceOperator(String op) {
