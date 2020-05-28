@@ -8,12 +8,8 @@ import java.util.stream.Collectors;
 
 public class Parser {
 
-    public final static String OPENING_BRACE = "(";
-    public final static String CLOSING_BRACE = ")";
     public final static String DECIMAL_PATTERN = "-*[0-9.]+";
-
     private final static String SYMBOL_PATTERN = "[^A-Za-z0-9.]";
-    private final static List<String> braces = List.of(OPENING_BRACE, CLOSING_BRACE);
 
 
     public List<Object> parseLexemes(String input) {
@@ -47,8 +43,8 @@ public class Parser {
             if (isEndOfFpn(strValue)) {
                 return i;
             }
-            if (Operators.isKnownOperator(key) || braces.contains(key)) {
-                 if (key.equals(CLOSING_BRACE) && !strValue.isEmpty()) {
+            if (Operators.isExecutableOperator(key) || Operators.isBraceOperator(key)) {
+                 if (Operators.isClosingBraceOperator(key) && !strValue.isEmpty()) {
                     return i;
                 } else {
                     value.append(key);
@@ -62,7 +58,7 @@ public class Parser {
     }
 
     private boolean isEndOfFpn(String strValue) {
-        return !strValue.isEmpty() && (strValue.matches(DECIMAL_PATTERN) || Operators.isKnownOperator(strValue));
+        return !strValue.isEmpty() && (strValue.matches(DECIMAL_PATTERN) || Operators.isExecutableOperator(strValue));
     }
 
     private boolean isPotentialOp(Character c, String key) {
