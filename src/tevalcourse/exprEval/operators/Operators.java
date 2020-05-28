@@ -1,28 +1,33 @@
 package tevalcourse.exprEval.operators;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Operators {
 
+    public final static String MULTIPLY = "*";
+    public static final String DIVIDE = "/";
+    public static final String SUBTRACT = "-";
+
     private final static Map<String, Operator> binaryOperators = Map.of(
-            "+", new BinaryOperator(1, Double::sum),
-            "-", new BinaryOperator(1, (a, b) -> a - b),
-            "*", new BinaryOperator(2, (a, b) -> a * b),
-            "/", new BinaryOperator(2, (a, b) -> (a) / b),
-            "^", new BinaryOperator(3, Math::pow),
-            "E", new BinaryOperator(3, (a, b) -> a * Math.pow(10, b))
+        "+", new BinaryOperator(1, Double::sum),
+            SUBTRACT, new BinaryOperator(1, (a, b) -> a - b),
+            MULTIPLY, new BinaryOperator(2, (a, b) -> a * b),
+            DIVIDE, new BinaryOperator(2, (a, b) -> (a) / b),
+        "^", new BinaryOperator(3, Math::pow),
+        "E", new BinaryOperator(3, (a, b) -> a * Math.pow(10, b))
     );
 
     private final static Map<String, Operator> unaryOperators = Map.of(
-            "sqrt", new UnaryOperator(3, Math::sqrt),
-            "abs", new UnaryOperator(3, Math::abs),
-            "sin", new UnaryOperator(3, a -> Math.sin(Math.toRadians(a))),
-            "cos", new UnaryOperator(3, a -> Math.cos(Math.toRadians(a))),
-            "tan", new UnaryOperator(3, a -> Math.tan(Math.toRadians(a))),
-            "cot", new UnaryOperator(3, a -> 1.0 / Math.tan(Math.toRadians(a)))
+        "sqrt", new UnaryOperator(3, Math::sqrt),
+        "abs", new UnaryOperator(3, Math::abs),
+        "sin", new UnaryOperator(3, a -> Math.sin(Math.toRadians(a))),
+        "cos", new UnaryOperator(3, a -> Math.cos(Math.toRadians(a))),
+        "tan", new UnaryOperator(3, a -> Math.tan(Math.toRadians(a))),
+        "cot", new UnaryOperator(3, a -> 1.0 / Math.tan(Math.toRadians(a)))
     );
 
     private final static Set<String> opNames = Stream.concat(
@@ -34,14 +39,22 @@ public class Operators {
         return opNames.contains(op);
     }
 
+    public static boolean shouldDelay(String op, String nextOp, String prevOp) {
+        return ((MULTIPLY.equals(op) || DIVIDE.equals(op)) && SUBTRACT.equals(nextOp))
+                || (SUBTRACT.equals(op) && (MULTIPLY.equals(prevOp) || DIVIDE.equals(prevOp)));
+    }
+
     public static int getPriority(String op) {
-        Operator binaryOp = binaryOperators.get(op);
-        return binaryOp == null ? unaryOperators.get(op).getPriority() : binaryOp.getPriority();
+        return Optional.ofNullable(binaryOperators.get(op))
+                .or(() -> Optional.ofNullable(unaryOperators.get(op)))
+                .map(Operator::getPriority)
+                .orElse(-1);
     }
 
     public static Operator get(String op) {
-        Operator binaryOp = binaryOperators.get(op);
-        return binaryOp == null ? unaryOperators.get(op) : binaryOp;
+        return Optional.ofNullable(binaryOperators.get(op))
+                .or(() -> Optional.ofNullable(unaryOperators.get(op)))
+                .orElseThrow(() -> new RuntimeException("Unknown operator " + op));
     }
 
     public static boolean isBinary(String op) {

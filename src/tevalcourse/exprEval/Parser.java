@@ -8,14 +8,15 @@ import java.util.stream.Collectors;
 
 public class Parser {
 
-    private final static List<String> braces = List.of("(", ")");
-    private final static String SYMBOL_PATTERN = "[^A-Za-z0-9.]";
-
+    public final static String OPENING_BRACE = "(";
+    public final static String CLOSING_BRACE = ")";
     public final static String DECIMAL_PATTERN = "-*[0-9.]+";
+
+    private final static String SYMBOL_PATTERN = "[^A-Za-z0-9.]";
+    private final static List<String> braces = List.of(OPENING_BRACE, CLOSING_BRACE);
 
 
     public List<Object> parseLexemes(String input) {
-
         List<Object> result = new ArrayList<>();
         List<Character> filteredChars = input.replaceAll(",", "\\.").chars()
                 .mapToObj(c -> (char) c)
@@ -47,17 +48,17 @@ public class Parser {
                 return i;
             }
             if (Operators.isKnownOperator(key) || braces.contains(key)) {
-                 if (key.equals(")") && !strValue.isEmpty()) {
+                 if (key.equals(CLOSING_BRACE) && !strValue.isEmpty()) {
                     return i;
                 } else {
                     value.append(key);
                     return i + 1;
                 }
             } else {
-                throw new RuntimeException("Unknown operator encountered: " + key);
+                throw new IllegalArgumentException("Unknown operator encountered: " + key);
             }
         }
-        throw new RuntimeException("Unknown case encountered: " + key);
+        throw new IllegalArgumentException("Unknown case encountered: " + key);
     }
 
     private boolean isEndOfFpn(String strValue) {
@@ -77,7 +78,10 @@ public class Parser {
     }
 
     private boolean isNegativeOrBigNumber(List<Character> chars, int i, String key) {
-        return key.equals("-") && (i == 0 || chars.get(i - 1).equals('(') || chars.get(i - 1) == 'E');
+        return key.equals("-") && (
+                i == 0
+                || chars.get(i - 1) == '('
+                || chars.get(i - 1) == 'E');
     }
 
 }
