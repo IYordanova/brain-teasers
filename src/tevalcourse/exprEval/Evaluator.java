@@ -3,14 +3,11 @@ package tevalcourse.exprEval;
 import tevalcourse.exprEval.operators.Operator;
 import tevalcourse.exprEval.operators.Operators;
 
-
 import java.text.DecimalFormat;
-import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Stack;
 import java.util.function.Supplier;
-import java.util.stream.IntStream;
 
 public class Evaluator {
 
@@ -24,28 +21,12 @@ public class Evaluator {
             return ERROR_MESSAGE;
         }
 
-        List<Object> lexemes;
-        try {
-            lexemes = parser.parseLexemes(input);
-        } catch (IllegalArgumentException e) {
-            return ERROR_MESSAGE;
-        }
-
-        try {
-            Stack<Operator> ops = new Stack<>();
-            Stack<Double> args = new Stack<>();
-            IntStream.range(0, lexemes.size()).forEach(index -> processLex(
-                    ops, args,
-                    lexemes.get(index),
-                    index == 0 ? null : lexemes.get(index - 1)));
-            executeOperations(ops, args, () -> true);
-            if (args.size() == 1) {
-                Double result = args.pop();
-                if (!result.isInfinite() && !result.isNaN()) {
-                    return df.format(result);
-                }
+        try {List<Object> lexemes = parser.parseLexemes(input);
+            Double result = processLex(new Stack<>(), new Stack<>(), lexemes, null);
+            if (!result.isInfinite() && !result.isNaN()) {
+                return df.format(result);
             }
-        } catch (UnsupportedOperationException | EmptyStackException | IllegalArgumentException e) {
+        } catch (UnsupportedOperationException | IllegalStateException | IllegalArgumentException e) {
             return ERROR_MESSAGE;
         }
 
@@ -55,6 +36,9 @@ public class Evaluator {
     private void executeOperations(Stack<Operator> ops, Stack<Double> args, Supplier<Boolean> condition) {
         while (!ops.isEmpty() && condition.get()) {
             Operator op = ops.pop();
+            if(args.isEmpty()) {
+                throw new IllegalStateException("Missing arguments for operator " + op);
+            }
             Double b = args.pop();
             Double result;
             if (op.isBinary()) {
@@ -70,8 +54,17 @@ public class Evaluator {
         }
     }
 
-    private void processLex(Stack<Operator> ops, Stack<Double> args, Object lex, Object prevLex) {
-        String lexStr = lex.toString();
+    private Object head(List<Object> list) {
+        return list.get(0);
+    }
+
+    private List<Object> tail(List<Object> list) {
+        return list.subList(1, list.size());
+    }
+
+    private Double processLex(Stack<Operator> ops, Stack<Double> args, List<Object> lexemes, Object prevLex) {
+        Object head = head(lexemes);
+        String lexStr = head.toString();
         if (lexStr.matches(Parser.DECIMAL_PATTERN)) {
             args.push(Double.parseDouble(lexStr));
         } else {
@@ -80,17 +73,27 @@ public class Evaluator {
                 ops.push(Operators.get(lexStr, prev));
             } else if (Operators.isClosingBraceOperator(lexStr)) {
                 executeOperations(ops, args, () -> !Operators.isOpeningBraceOperator(ops.peek()));
+                if(ops.isEmpty()) {
+                    throw new IllegalStateException("Invalid expression");
+                }
                 ops.pop();
             } else if (Operators.isExecutableOperator(lexStr)) {
                 Operator op = Operators.get(lexStr, prev);
-                if(op.isUnary() && "-".equals(lexStr) && "-".equals(prev)) {
-                    ops.push(op);
-                    return;
+                if (!op.isUnary() || !"-".equals(lexStr) || !"-".equals(prev)) {
+                    int priority = op.getPriority();
+                    executeOperations(ops, args, () -> !Operators.isOpeningBraceOperator(ops.peek()) && ops.peek().getPriority() >= priority);
                 }
-                int priority = op.getPriority();
-                executeOperations(ops, args, () -> !Operators.isOpeningBraceOperator(ops.peek()) && ops.peek().getPriority() >= priority);
                 ops.push(op);
             }
+        }
+        if (lexemes.size() != 1) {
+            return processLex(ops, args, tail(lexemes), head);
+        } else {
+            executeOperations(ops, args, () -> true);
+            if (args.size() == 1) {
+               return args.pop();
+            }
+            throw new IllegalStateException("Invalid expression");
         }
     }
 }
