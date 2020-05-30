@@ -2,9 +2,6 @@ package tevalcourse.exprEval.operators;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Operators {
 
@@ -30,18 +27,23 @@ public class Operators {
             MINUS, new BinaryOperator(MINUS, 1, (a, b) -> a - b),
             MULTIPLY, new BinaryOperator(MULTIPLY, 2, (a, b) -> a * b),
             DIVIDE, new BinaryOperator(DIVIDE, 2, (a, b) -> (a) / b),
-            POW, new BinaryOperator(POW,3, Math::pow),
-            E, new BinaryOperator(E, 3, (a, b) -> a * Math.pow(10, b))
+            POW, new BinaryOperator(POW,4, (a,b) -> {
+                if(a < 0) {
+                    throw new IllegalArgumentException("as per the problem description..now");
+                }
+                return Math.pow(a, b);
+            }),
+            E, new BinaryOperator(E, 4, (a, b) -> a * Math.pow(10, b))
     );
 
     private final static Map<String, Operator> unaryOperators = Map.of(
-            MINUS, new UnaryOperator(MINUS, 4, a -> -a),
-            SQRT, new UnaryOperator(SQRT, 3, Math::sqrt),
-            ABS, new UnaryOperator(ABS, 3, Math::abs),
-            SIN, new UnaryOperator(SIN, 3, a -> Math.sin(Math.toRadians(a))),
-            COS, new UnaryOperator(COS, 3, a -> Math.cos(Math.toRadians(a))),
-            TAN, new UnaryOperator(TAN, 3, a -> Math.tan(Math.toRadians(a))),
-            COT, new UnaryOperator(COT, 3, a -> 1.0 / Math.tan(Math.toRadians(a)))
+            MINUS, new UnaryOperator(MINUS, 3, a -> -a),
+            SQRT, new UnaryOperator(SQRT, 4, Math::sqrt),
+            ABS, new UnaryOperator(ABS, 4, Math::abs),
+            SIN, new UnaryOperator(SIN, 4, a -> Math.sin(Math.toRadians(a))),
+            COS, new UnaryOperator(COS, 4, a -> Math.cos(Math.toRadians(a))),
+            TAN, new UnaryOperator(TAN, 4, a -> Math.tan(Math.toRadians(a))),
+            COT, new UnaryOperator(COT, 4, a -> 1.0 / Math.tan(Math.toRadians(a)))
     );
 
     private final static Map<String, Operator> braceOperators = Map.of(
@@ -49,13 +51,8 @@ public class Operators {
             CLOSING_BRACE, new BraceOperator(CLOSING_BRACE)
     );
 
-    private final static Set<String> opNames = Stream.concat(
-            binaryOperators.keySet().stream(),
-            unaryOperators.keySet().stream()
-    ).collect(Collectors.toSet());
-
     public static boolean isExecutableOperator(String op) {
-        if(opNames.contains(op)) {
+        if(binaryOperators.containsKey(op) || unaryOperators.containsKey(op)) {
             return get(op).isExecutable();
         } else {
             return false;
@@ -78,31 +75,25 @@ public class Operators {
         return CLOSING_BRACE.equals(op);
     }
 
-    public static boolean isClosingBraceOperator(Operator op) {
-        return braceOperators.get(CLOSING_BRACE).equals(op);
-    }
-
-    private static boolean shouldDelay(String op, String nextOp, String prevOp) {
-        return ((MULTIPLY.equals(op) || DIVIDE.equals(op)) && MINUS.equals(nextOp))
-                || (MINUS.equals(op) && (MULTIPLY.equals(prevOp) || DIVIDE.equals(prevOp)));
-    }
-
-    public static Operator getCorrected(String op, String nextOp, String prevOp) {
-        if(shouldDelay(op, nextOp, prevOp) && MINUS.equals(op)) {
-            return unaryOperators.get(MINUS);
+    public static Operator get(String op, String prevLex) {
+        if(MINUS.equals(op)) {
+            if(prevLex == null
+                    || MULTIPLY.equals(prevLex)
+                    || DIVIDE.equals(prevLex)
+                    || MINUS.equals(prevLex)
+                    || OPENING_BRACE.equals(prevLex)) {
+                return unaryOperators.get(MINUS);
+            }
+            return binaryOperators.get(MINUS);
         }
         return get(op);
     }
 
-
-    public static Operator get(String op) {
+    private static Operator get(String op) {
         return Optional.ofNullable(binaryOperators.get(op))
                 .or(() -> Optional.ofNullable(unaryOperators.get(op)))
                 .or(() -> Optional.ofNullable(braceOperators.get(op)))
                 .orElseThrow(() -> new UnsupportedOperationException("Unknown operator " + op));
     }
 
-    public static boolean isBinary(Operator op) {
-        return op instanceof BinaryOperator;
-    }
 }

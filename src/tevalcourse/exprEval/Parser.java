@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 public class Parser {
 
     public final static String DECIMAL_PATTERN = "-*[0-9.]+";
-    private final static String SYMBOL_PATTERN = "[^A-Za-z0-9.]";
 
 
     public List<Object> parseLexemes(String input) {
@@ -27,57 +26,44 @@ public class Parser {
         return result;
     }
 
+
     private int parse(List<Character> chars, StringBuilder value, int i) {
         if (i >= chars.size()) {
             return i;
         }
         Character c = chars.get(i);
         String key = Character.toString(c);
+        String strValue = value.toString();
 
-        if (isNegativeOrBigNumber(chars, i, key) || isPotentialFpn(c) || isPotentialOpStarter(c)) {
+        if (isPotentialFpn(c) || isPotentialFuncOp(c)) {
             value.append(c);
             return parse(chars, value, i + 1);
         }
-        if (isPotentialOp(c, key)) {
-            String strValue = value.toString();
-            if (isEndOfFpn(strValue)) {
-                return i;
-            }
-            if (Operators.isExecutableOperator(key) || Operators.isBraceOperator(key)) {
-                 if (Operators.isClosingBraceOperator(key) && !strValue.isEmpty()) {
-                    return i;
-                } else {
-                    value.append(key);
-                    return i + 1;
-                }
-            } else {
-                throw new IllegalArgumentException("Unknown operator encountered: " + key);
-            }
+        if (isEndOfOpOrArg(strValue)) {
+            return i;
         }
-        throw new IllegalArgumentException("Unknown case encountered: " + key);
+        if (Operators.isExecutableOperator(key) || Operators.isBraceOperator(key)) {
+            if (Operators.isClosingBraceOperator(key) && !strValue.isEmpty()) {
+                return i;
+            } else {
+                value.append(key);
+                return i + 1;
+            }
+        } else {
+            throw new IllegalArgumentException("Unknown operator encountered: " + key);
+        }
     }
 
-    private boolean isEndOfFpn(String strValue) {
+    private boolean isEndOfOpOrArg(String strValue) {
         return !strValue.isEmpty() && (strValue.matches(DECIMAL_PATTERN) || Operators.isExecutableOperator(strValue));
     }
 
-    private boolean isPotentialOp(Character c, String key) {
-        return key.matches(SYMBOL_PATTERN) || c == 'E';
-    }
-
-    private boolean isPotentialOpStarter(Character c) {
+    private boolean isPotentialFuncOp(Character c) {
         return Character.isLetter(c);
     }
 
     private boolean isPotentialFpn(Character c) {
         return Character.isDigit(c) || c == '.';
-    }
-
-    private boolean isNegativeOrBigNumber(List<Character> chars, int i, String key) {
-        return key.equals("-") && (
-                i == 0
-                || chars.get(i - 1) == '('
-                || chars.get(i - 1) == 'E');
     }
 
 }

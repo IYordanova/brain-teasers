@@ -15,6 +15,16 @@ public class BraceOperator implements Operator {
     }
 
     @Override
+    public boolean isUnary() {
+        return false;
+    }
+
+    @Override
+    public boolean isBinary() {
+        return false;
+    }
+
+    @Override
     public int getPriority() {
         return -1;
     }

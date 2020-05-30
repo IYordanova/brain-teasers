@@ -36,7 +36,6 @@ public class Evaluator {
             IntStream.range(0, lexemes.size()).forEach(index -> processLex(
                         ops, args,
                         lexemes.get(index),
-                        index == lexemes.size() - 1 ? null : lexemes.get(index + 1),
                         index == 0 ? null : lexemes.get(index - 1)));
             executeOperations(ops, args, () -> true);
             if (args.size() == 1) {
@@ -57,7 +56,7 @@ public class Evaluator {
             Operator op = ops.pop();
             Double b = args.pop();
             Double result;
-            if (Operators.isBinary(op)) {
+            if (op.isBinary()) {
                 if (args.isEmpty()) {
                     throw new UnsupportedOperationException("Missing second arg for a binary operation.");
                 }
@@ -70,27 +69,22 @@ public class Evaluator {
         }
     }
 
-    private void processLex(Stack<Operator> ops, Stack<Double> args, Object lex, Object nextLex, Object prevLex) {
+    private void processLex(Stack<Operator> ops, Stack<Double> args, Object lex, Object prevLex) {
         String lexStr = lex.toString();
         if (lexStr.matches(Parser.DECIMAL_PATTERN)) {
             args.push(Double.parseDouble(lexStr));
-        } else if (Operators.isOpeningBraceOperator(lexStr)) {
-            ops.push(Operators.get(lexStr));
-        } else if (Operators.isClosingBraceOperator(lexStr)) {
-            executeOperations(ops, args, () -> !Operators.isOpeningBraceOperator(ops.peek()));
-            ops.pop();
-        } else if (Operators.isExecutableOperator(lexStr)) {
-            Operator op = Operators.get(lexStr);
-            Operator correctedOp = Operators.getCorrected(
-                    lexStr,
-                    Optional.ofNullable(nextLex).map(Object::toString).orElse(""),
-                    Optional.ofNullable(prevLex).map(Object::toString).orElse(""));
-            if(op.equals(correctedOp)) {
+        } else {
+            String prev = Optional.ofNullable(prevLex).map(Object::toString).orElse(null);
+            if (Operators.isOpeningBraceOperator(lexStr)) {
+                ops.push(Operators.get(lexStr, prev));
+            } else if (Operators.isClosingBraceOperator(lexStr)) {
+                executeOperations(ops, args, () -> !Operators.isOpeningBraceOperator(ops.peek()));
+                ops.pop();
+            } else if (Operators.isExecutableOperator(lexStr)) {
+                Operator op = Operators.get(lexStr, prev);
                 int priority = op.getPriority();
                 executeOperations(ops, args, () -> !Operators.isOpeningBraceOperator(ops.peek()) && ops.peek().getPriority() >= priority);
                 ops.push(op);
-            } else {
-                ops.push(correctedOp);
             }
         }
     }

@@ -27,17 +27,19 @@ public class ExpressionEvaluation {
             put("sqrt(cos(120))", errorMessage);
             put("12-(2+3(98 - (7+7))", errorMessage);
             put("12-", errorMessage);
-            put("12--1", errorMessage);
             put("12-(2+3))", errorMessage);
             put("12-(2+(3", errorMessage);
             put("12-2+3))", errorMessage);
-            put("12-2,00", "10.00");
 
+            put("(-2)^3", errorMessage); // ?????????????? description
+
+            put("12-2,00", "10.00"); //  ????????????????????? should accept?
+//
 //            put(Double.MAX_VALUE + " + 1.01", "1.01");
 //            put(Double.MIN_VALUE + " - 1.01", "-1.01");
 //            put(Float.MAX_VALUE + " + 1.01", "1.01");
 //            put(Float.MIN_VALUE + " - 1.01", "-1.01");
-//
+
             put("21", "21.00");
             put("-323.923", "-323.92");
             put("-323 + (-2)", "-325.00");
@@ -54,8 +56,7 @@ public class ExpressionEvaluation {
             put("2.23^3", "11.09");
             put("2^3.45", "10.93");
             put("2+2*2", "6.00");
-            put("(-2)^3", "-8.00");
-
+//
             put("2 * 2^3 + (12 - 7)", "21.00");
             put("2 * 2^3 + (12.23 - 7.23) * cos(90)", "16.00");
 
@@ -68,16 +69,19 @@ public class ExpressionEvaluation {
             put("9 + abs(-11) * 2 + (1 + (-2)) * 3", "28.00");
             put("sqrt(abs(-146 + 2))", "12.00");
             put("abs(2.2-(3*2))", "3.80");
-
+//
             put("-12.324 + 123414.4442*1+(23.5-23.112532141421*(213.2 +23123.44214))", "-415943.27");
-            put("12-(2+3)()", "7.00"); // ????
+            put("12-(2+3)()", "7.00");
             put("1/-(2/3)", "-1.50");
             put("1/-(2/3+((12-8)+ (12-21)*2))", "0.07");
             put("1*-(2/3.123+((12-8.213)+ (12.01-21.23322)*2.12))", "15.13");
             put("1/-sqrt(25)", "-0.20");
             put("1/-(sqrt(25) + 5)", "-0.10");
-        }};
+            put("1/--(sqrt(25) + 5)", "0.10");
+            put("-3^4", "-81.00");
+            put("12345677*-(-(-(((98765431.)))))", "-1219326109891787.00");
 
+        }};
 
         tests.forEach((key, value) -> {
             String actual = evaluator.evaluate(key);

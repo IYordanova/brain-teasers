@@ -20,6 +20,16 @@ public class UnaryOperator implements Operator {
     }
 
     @Override
+    public boolean isUnary() {
+        return true;
+    }
+
+    @Override
+    public boolean isBinary() {
+        return false;
+    }
+
+    @Override
     public int getPriority() {
         return priority;
     }
