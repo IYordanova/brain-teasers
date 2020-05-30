@@ -10,7 +10,7 @@ public class Operators {
 
     private static final String PLUS = "+";
     private static final String MINUS = "-";
-    private final static String MULTIPLY = "*";
+    private static final String MULTIPLY = "*";
     private static final String DIVIDE = "/";
     private static final String POW = "^";
     private static final String E = "E";
@@ -78,9 +78,10 @@ public class Operators {
     public static Operator get(String op, String prevLex) {
         if(MINUS.equals(op)) {
             if(prevLex == null
+                    || MINUS.equals(prevLex)
+                    || PLUS.equals(prevLex)
                     || MULTIPLY.equals(prevLex)
                     || DIVIDE.equals(prevLex)
-                    || MINUS.equals(prevLex)
                     || OPENING_BRACE.equals(prevLex)) {
                 return unaryOperators.get(MINUS);
             }

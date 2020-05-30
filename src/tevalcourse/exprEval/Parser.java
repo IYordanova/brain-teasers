@@ -13,7 +13,8 @@ public class Parser {
 
     public List<Object> parseLexemes(String input) {
         List<Object> result = new ArrayList<>();
-        List<Character> filteredChars = input.replaceAll(",", "\\.").chars()
+        List<Character> filteredChars = input.replaceAll(",", "\\.")
+                .chars()
                 .mapToObj(c -> (char) c)
                 .filter(c -> !Character.isWhitespace(c))
                 .collect(Collectors.toList());

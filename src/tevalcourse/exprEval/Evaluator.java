@@ -3,6 +3,7 @@ package tevalcourse.exprEval;
 import tevalcourse.exprEval.operators.Operator;
 import tevalcourse.exprEval.operators.Operators;
 
+
 import java.text.DecimalFormat;
 import java.util.EmptyStackException;
 import java.util.List;
@@ -22,8 +23,8 @@ public class Evaluator {
         if (input == null || input.trim().equals("null")) {
             return ERROR_MESSAGE;
         }
-        List<Object> lexemes;
 
+        List<Object> lexemes;
         try {
             lexemes = parser.parseLexemes(input);
         } catch (IllegalArgumentException e) {
@@ -34,9 +35,9 @@ public class Evaluator {
             Stack<Operator> ops = new Stack<>();
             Stack<Double> args = new Stack<>();
             IntStream.range(0, lexemes.size()).forEach(index -> processLex(
-                        ops, args,
-                        lexemes.get(index),
-                        index == 0 ? null : lexemes.get(index - 1)));
+                    ops, args,
+                    lexemes.get(index),
+                    index == 0 ? null : lexemes.get(index - 1)));
             executeOperations(ops, args, () -> true);
             if (args.size() == 1) {
                 Double result = args.pop();
@@ -58,7 +59,7 @@ public class Evaluator {
             Double result;
             if (op.isBinary()) {
                 if (args.isEmpty()) {
-                    throw new UnsupportedOperationException("Missing second arg for a binary operation.");
+                    throw new UnsupportedOperationException("Missing second arg for a binary operation:" + op);
                 }
                 Double a = args.pop();
                 result = op.execute(a, b);
@@ -82,6 +83,10 @@ public class Evaluator {
                 ops.pop();
             } else if (Operators.isExecutableOperator(lexStr)) {
                 Operator op = Operators.get(lexStr, prev);
+                if(op.isUnary() && "-".equals(lexStr) && "-".equals(prev)) {
+                    ops.push(op);
+                    return;
+                }
                 int priority = op.getPriority();
                 executeOperations(ops, args, () -> !Operators.isOpeningBraceOperator(ops.peek()) && ops.peek().getPriority() >= priority);
                 ops.push(op);
@@ -89,3 +94,4 @@ public class Evaluator {
         }
     }
 }
+
