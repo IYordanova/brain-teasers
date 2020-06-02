@@ -1,21 +1,19 @@
 package tevalcourse.theory.algorithms.analysis;
 
-import java.util.Arrays;
-
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 
 public class Percolation {
     private final int n;
-    private final int[] opened;
-    public final WeightedQuickUnionUF weightedQuickUnionUF;
+    private final boolean[] opened;
+    private final WeightedQuickUnionUF weightedQuickUnionUF;
 
     public Percolation(int n) {
         if (n <= 0) {
             throw new IllegalArgumentException("Cannot create grid with size less than or equal to 0");
         }
         this.n = n;
-        this.opened = new int[n * n + 1];
+        this.opened = new boolean[n * n + 1];
         this.weightedQuickUnionUF = new WeightedQuickUnionUF(n * n + 1);
     }
 
@@ -27,10 +25,10 @@ public class Percolation {
         validatePosition(row, col);
         if (!isOpen(row, col)) {
             int index = index(row, col);
-            opened[index] = 1;
+            opened[index] = true;
             int topRow = row - 1;
             if (topRow >= 1 && isOpen(topRow, col)) {
-                weightedQuickUnionUF.union(index, index - 20);
+                weightedQuickUnionUF.union(index, index - n);
             }
             int rightCol = col + 1;
             if (rightCol <= n && isOpen(row, rightCol)) {
@@ -38,7 +36,7 @@ public class Percolation {
             }
             int bottomRow = row + 1;
             if (bottomRow <= n && isOpen(bottomRow, col)) {
-                weightedQuickUnionUF.union(index, index + 20);
+                weightedQuickUnionUF.union(index, index + n);
             }
             int leftCol = col - 1;
             if (leftCol >= 1 && isOpen(row, leftCol)) {
@@ -49,11 +47,7 @@ public class Percolation {
 
     public boolean isOpen(int row, int col) {
         validatePosition(row, col);
-        return opened[index(row, col)] == 1;
-    }
-
-    private boolean isOpen(int index) {
-        return opened[index] == 1;
+        return opened[index(row, col)];
     }
 
     public boolean isFull(int row, int col) {
@@ -73,9 +67,13 @@ public class Percolation {
     }
 
     public int numberOfOpenSites() {
-        return (int) Arrays.stream(opened)
-                .filter(val -> val == 1)
-                .count();
+        int count = 0;
+        for (boolean b : opened) {
+            if (b) {
+                count++;
+            }
+        }
+        return count;
     }
 
     public boolean percolates() {
