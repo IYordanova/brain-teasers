@@ -2,61 +2,80 @@ package tevalcourse.theory.algorithms.analysis;
 
 import java.util.Arrays;
 
-import edu.princeton.cs.algs4.StdRandom;
-import edu.princeton.cs.algs4.QuickFindUF;
+import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
-
-/*
-        -1 - closed/ blocked
-         0 - opened
-         N - root parent
- */
 
 public class Percolation {
     private final int n;
-    public final int[][] grid;
+    private final int[] opened;
+    public final WeightedQuickUnionUF weightedQuickUnionUF;
 
     public Percolation(int n) {
         if (n <= 0) {
             throw new IllegalArgumentException("Cannot create grid with size less than or equal to 0");
         }
         this.n = n;
-        this.grid = new int[n + 1][];
-        for (int i = 1; i <= n; i++) {
-            grid[i] = new int[n+1];
-            for (int j = 1; j <= n; j++) {
-                grid[i][j] = -1;
-            }
-        }
+        this.opened = new int[n * n + 1];
+        this.weightedQuickUnionUF = new WeightedQuickUnionUF(n * n + 1);
+    }
+
+    private int index(int row, int col) {
+        return (row - 1) * n + col;
     }
 
     public void open(int row, int col) {
         validatePosition(row, col);
         if (!isOpen(row, col)) {
-            grid[row][col] = (row == 1 ? col : 0);
+            int index = index(row, col);
+            opened[index] = 1;
+            int topRow = row - 1;
+            if (topRow >= 1 && isOpen(topRow, col)) {
+                weightedQuickUnionUF.union(index, index - 20);
+            }
+            int rightCol = col + 1;
+            if (rightCol <= n && isOpen(row, rightCol)) {
+                weightedQuickUnionUF.union(index, index + 1);
+            }
+            int bottomRow = row + 1;
+            if (bottomRow <= n && isOpen(bottomRow, col)) {
+                weightedQuickUnionUF.union(index, index + 20);
+            }
+            int leftCol = col - 1;
+            if (leftCol >= 1 && isOpen(row, leftCol)) {
+                weightedQuickUnionUF.union(index, index - 1);
+            }
         }
     }
 
     public boolean isOpen(int row, int col) {
         validatePosition(row, col);
-        return grid[row][col] > -1;
+        return opened[index(row, col)] == 1;
+    }
+
+    private boolean isOpen(int index) {
+        return opened[index] == 1;
     }
 
     public boolean isFull(int row, int col) {
         validatePosition(row, col);
-        return grid[row][col] >= 1;
+        int index = index(row, col);
+        if (!isOpen(row, col)) {
+            return false;
+        }
+        int childVal = weightedQuickUnionUF.find(index);
+        for (int i = 1; i <= n; i++) {
+            int parentVal = weightedQuickUnionUF.find(i);
+            if (parentVal == childVal) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public int numberOfOpenSites() {
-        int count = 0;
-        for (int i = 1; i <= n; i++) {
-            for (int j = 1; j <= n; j++) {
-                if (isOpen(i, j)) {
-                    count++;
-                }
-            }
-        }
-        return count;
+        return (int) Arrays.stream(opened)
+                .filter(val -> val == 1)
+                .count();
     }
 
     public boolean percolates() {
@@ -69,25 +88,8 @@ public class Percolation {
     }
 
     private void validatePosition(int row, int col) {
-        if (row <= 0 || row > n || col <= 0 || col > n) {
+        if (row < 1 || row > n || col < 1 || col > n) {
             throw new IllegalArgumentException(String.format("Invalid position (%s,%s)", row, col));
         }
     }
-
-
-    public static void main(String[] args) {
-        int n = 20;
-        Percolation percolation = new Percolation(n);
-        while (!percolation.percolates()) {
-            int row = StdRandom.uniform(1, n + 1);
-            int col = StdRandom.uniform(1, n + 1);
-            percolation.open(row, col);
-            for (int i = 1; i <= n; i++) {
-                System.out.println(Arrays.toString(percolation.grid[i]));
-            }
-            System.out.println();
-        }
-        System.out.println(percolation.numberOfOpenSites());
-    }
-
 }
