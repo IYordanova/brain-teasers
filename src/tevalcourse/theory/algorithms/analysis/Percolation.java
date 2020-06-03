@@ -7,6 +7,7 @@ public class Percolation {
     private final int n;
     private final boolean[] opened;
     private final WeightedQuickUnionUF weightedQuickUnionUF;
+    private int numOpened = 0;
 
     public Percolation(int n) {
         if (n <= 0) {
@@ -26,6 +27,7 @@ public class Percolation {
         if (!isOpen(row, col)) {
             int index = index(row, col);
             opened[index] = true;
+            numOpened++;
             int topRow = row - 1;
             if (topRow >= 1 && isOpen(topRow, col)) {
                 weightedQuickUnionUF.union(index, index - n);
@@ -67,13 +69,7 @@ public class Percolation {
     }
 
     public int numberOfOpenSites() {
-        int count = 0;
-        for (boolean b : opened) {
-            if (b) {
-                count++;
-            }
-        }
-        return count;
+        return numOpened;
     }
 
     public boolean percolates() {

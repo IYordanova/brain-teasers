@@ -12,10 +12,13 @@ public class PercolationStats {
     private final double[] times;
 
     public PercolationStats(int gridSize, int testRuns) {
+        if (gridSize <= 0 || testRuns <= 0) {
+            throw new IllegalArgumentException("n and T should be positive numbers");
+        }
         times = new double[testRuns];
-        Percolation percolation = new Percolation(gridSize);
         for (int t = 0; t < testRuns; t++) {
             Stopwatch stopwatch = new Stopwatch();
+            Percolation percolation = new Percolation(gridSize);
             while (!percolation.percolates()) {
                 int row = StdRandom.uniform(1, gridSize + 1);
                 int col = StdRandom.uniform(1, gridSize + 1);
@@ -55,13 +58,9 @@ public class PercolationStats {
         int gridSize = Integer.parseInt(args[0]);
         int testRuns = Integer.parseInt(args[1]);
 
-        if (gridSize <= 0 || testRuns <= 0) {
-            throw new IllegalArgumentException("n and T should be positive numbers");
-        }
-
         PercolationStats stats = new PercolationStats(gridSize, testRuns);
-        System.out.println(stats.mean());
-        System.out.println(stats.stddev());
-        System.out.println(String.format("[%s, %s]", stats.confidenceLo(), stats.confidenceHi()));
+        System.out.println(String.format("mean() = %s", stats.mean()));
+        System.out.println(String.format("stddev = %s", stats.stddev()));
+        System.out.println(String.format("95%% confidence interval = [%s, %s]", stats.confidenceLo(), stats.confidenceHi()));
     }
 }
