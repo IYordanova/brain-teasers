@@ -1,9 +1,6 @@
 package tevalcourse.seachautocomplete;
 
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Trie {
     final Node root;
@@ -34,10 +31,10 @@ public class Trie {
         return result;
     }
 
-    public List<String> getCandidates(Node node, int limit) {
+    public Set<String> getCandidates(Node node, int limit) {
         Deque<Node> queue = new LinkedList<>();
         queue.add(node);
-        List<String> result = new ArrayList<>();
+        Set<String> result = new TreeSet<>();
         while (!queue.isEmpty() && result.size() < limit) {
             Node n = queue.pollFirst();
             String word = n.getWord();
