@@ -2,51 +2,52 @@ package tevalcourse.theory.algorithms.analysis;
 
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
-import edu.princeton.cs.algs4.Stopwatch;
 
 
 public class PercolationStats {
 
     private static final double CONFIDENCE_95 = 1.96;
 
-    private final double[] times;
+    private final int testRuns;
+    private final double[] fractionOfOpenSites;
 
-    public PercolationStats(int gridSize, int testRuns) {
-        if (gridSize <= 0 || testRuns <= 0) {
+    public PercolationStats(int n, int testRuns) {
+        if (n <= 0 || testRuns <= 0) {
             throw new IllegalArgumentException("n and T should be positive numbers");
         }
-        times = new double[testRuns];
+        this.testRuns = testRuns;
+        this.fractionOfOpenSites = new double[testRuns];
+        double numOfSites = n * n;
+
         for (int t = 0; t < testRuns; t++) {
-            Stopwatch stopwatch = new Stopwatch();
-            Percolation percolation = new Percolation(gridSize);
+            Percolation percolation = new Percolation(n);
             while (!percolation.percolates()) {
-                int row = StdRandom.uniform(1, gridSize + 1);
-                int col = StdRandom.uniform(1, gridSize + 1);
+                int row = StdRandom.uniform(1, n + 1);
+                int col = StdRandom.uniform(1, n + 1);
                 percolation.open(row, col);
             }
-            times[t] = stopwatch.elapsedTime();
-            // PercolationVisualizer.draw(percolation, gridSize);
+            fractionOfOpenSites[t] = percolation.numberOfOpenSites() / numOfSites;
         }
     }
 
     public double confidenceHi() {
         double mean = mean();
         double stdDev = stddev();
-        return mean + CONFIDENCE_95 * stdDev;
+        return mean + CONFIDENCE_95 * stdDev / Math.sqrt(testRuns);
     }
 
     public double confidenceLo() {
         double mean = mean();
         double stdDev = stddev();
-        return mean - CONFIDENCE_95 * stdDev;
+        return mean - CONFIDENCE_95 * stdDev / Math.sqrt(testRuns);
     }
 
     public double mean() {
-        return StdStats.mean(times);
+        return StdStats.mean(fractionOfOpenSites);
     }
 
     public double stddev() {
-        return StdStats.stddev(times);
+        return StdStats.stddev(fractionOfOpenSites);
     }
 
 
@@ -59,7 +60,7 @@ public class PercolationStats {
         int testRuns = Integer.parseInt(args[1]);
 
         PercolationStats stats = new PercolationStats(gridSize, testRuns);
-        System.out.println(String.format("mean() = %s", stats.mean()));
+        System.out.println(String.format("mean = %s", stats.mean()));
         System.out.println(String.format("stddev = %s", stats.stddev()));
         System.out.println(String.format("95%% confidence interval = [%s, %s]", stats.confidenceLo(), stats.confidenceHi()));
     }

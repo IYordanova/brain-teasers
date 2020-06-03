@@ -6,6 +6,7 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 public class Percolation {
     private final int n;
     private final boolean[] opened;
+    private final int[] rootParents;
     private final WeightedQuickUnionUF weightedQuickUnionUF;
     private int numOpened = 0;
 
@@ -15,6 +16,7 @@ public class Percolation {
         }
         this.n = n;
         this.opened = new boolean[n * n + 1];
+        this.rootParents = new int[n + 1];
         this.weightedQuickUnionUF = new WeightedQuickUnionUF(n * n + 1);
     }
 
@@ -23,11 +25,13 @@ public class Percolation {
     }
 
     public void open(int row, int col) {
-        validatePosition(row, col);
         if (!isOpen(row, col)) {
+
             int index = index(row, col);
+
             opened[index] = true;
             numOpened++;
+
             int topRow = row - 1;
             if (topRow >= 1 && isOpen(topRow, col)) {
                 weightedQuickUnionUF.union(index, index - n);
@@ -44,6 +48,10 @@ public class Percolation {
             if (leftCol >= 1 && isOpen(row, leftCol)) {
                 weightedQuickUnionUF.union(index, index - 1);
             }
+
+            for (int i = 1; i <= n; i++) {
+                rootParents[i] = weightedQuickUnionUF.find(i);
+            }
         }
     }
 
@@ -53,15 +61,13 @@ public class Percolation {
     }
 
     public boolean isFull(int row, int col) {
-        validatePosition(row, col);
-        int index = index(row, col);
         if (!isOpen(row, col)) {
             return false;
         }
+        int index = index(row, col);
         int childVal = weightedQuickUnionUF.find(index);
         for (int i = 1; i <= n; i++) {
-            int parentVal = weightedQuickUnionUF.find(i);
-            if (parentVal == childVal) {
+            if (rootParents[i] == childVal) {
                 return true;
             }
         }
