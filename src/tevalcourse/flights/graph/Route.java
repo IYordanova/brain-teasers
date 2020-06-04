@@ -4,7 +4,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Objects;
 
-class Route implements Comparable<Route> {
+public class Route implements Comparable<Route> {
     private final int price;
     private final Deque<String> airports;
 

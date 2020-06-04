@@ -2,6 +2,7 @@ package tevalcourse.flights;
 
 import tevalcourse.flights.graph.Flight;
 import tevalcourse.flights.graph.FlightFinder;
+import tevalcourse.flights.graph.Route;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +27,10 @@ public class FlightFinderTest {
         );
 
         FlightFinder flightFinder = new FlightFinder(flights);
-        flightFinder.findConnections("SFO", "ZRH").forEach(System.out::println);
+        List<Route> routes = flightFinder.findConnections("SFO", "ZRH", 10);
+        routes.stream()
+                .sequential()
+                .map(Route::toString)
+                .forEach(System.out::println);
     }
 }
