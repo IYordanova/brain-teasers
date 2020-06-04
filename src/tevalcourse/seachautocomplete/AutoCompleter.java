@@ -1,11 +1,15 @@
 package tevalcourse.seachautocomplete;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class AutoComplete {
+public class AutoCompleter {
 
     private static final int limit = 10;
     private static final String NO_MATCHES_MESSAGE = "<no matches>";
@@ -14,13 +18,14 @@ public class AutoComplete {
     private final ExecutorService executor;
     private final Trie trie;
 
-    public AutoComplete(List<String> dict) {
+    public AutoCompleter(List<String> dict) {
         this.trie = new Trie(dict);
         this.executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());;
     }
 
     public void solve(List<String> queries) {
-        for (String query : queries) {
+        for (String q : queries) {
+            String query = q.toLowerCase();
             Set<String> candidates = findCandidates(trie, query);
             if(candidates.size() < limit) {
                 candidates.addAll(getAlternativeCandidates(query, candidates, spellChecker::additionalCharAtEnd));
@@ -31,12 +36,12 @@ public class AutoComplete {
             if(candidates.size() < limit) {
                 candidates.addAll(getAlternativeCandidates(query, candidates, spellChecker::swappedSeqChars));
             }
-            if(candidates.size() < limit) {
-                candidates.addAll(getAlternativeCandidates(query, candidates, spellChecker::missingCharAtStart));
-            }
-            if(candidates.size() < limit) {
-                candidates.addAll(getAlternativeCandidates(query, candidates, spellChecker::additionalCharAtStart));
-            }
+//            if(candidates.size() < limit) {
+//                candidates.addAll(getAlternativeCandidates(query, candidates, spellChecker::missingCharAtStart));
+//            }
+//            if(candidates.size() < limit) {
+//                candidates.addAll(getAlternativeCandidates(query, candidates, spellChecker::additionalCharAtStart));
+//            }
             System.out.println(candidates.isEmpty() ? NO_MATCHES_MESSAGE : String.join(" ", candidates));
         }
         executor.shutdown();

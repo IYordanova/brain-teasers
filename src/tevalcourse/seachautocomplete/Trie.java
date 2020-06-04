@@ -1,6 +1,10 @@
 package tevalcourse.seachautocomplete;
 
-import java.util.*;
+import java.util.Deque;
+import java.util.List;
+import java.util.LinkedList;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class Trie {
     final Node root;

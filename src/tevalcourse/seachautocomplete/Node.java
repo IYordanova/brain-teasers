@@ -3,7 +3,6 @@ package tevalcourse.seachautocomplete;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringJoiner;
 
 public class Node {
     private String word;
@@ -37,9 +36,10 @@ public class Node {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", Node.class.getSimpleName() + "[", "]")
-                .add("word='" + word + "'")
-                .add("children=" + children)
-                .toString();
+        final StringBuilder sb = new StringBuilder("Node{");
+        sb.append("word='").append(word).append('\'');
+        sb.append(", children=").append(children);
+        sb.append('}');
+        return sb.toString();
     }
 }
