@@ -1,13 +1,9 @@
 package tevalcourse.seachautocomplete;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.concurrent.*;
 
 public class AutoCompleter {
 
@@ -20,42 +16,36 @@ public class AutoCompleter {
 
     public AutoCompleter(List<String> dict) {
         this.trie = new Trie(dict);
-        this.executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());;
+        this.executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     }
 
     public void solve(List<String> queries) {
         for (String q : queries) {
             String query = q.toLowerCase();
             Set<String> candidates = findCandidates(trie, query);
-            if(candidates.size() < limit) {
-                candidates.addAll(getAlternativeCandidates(query, candidates, spellChecker::additionalCharAtEnd));
+            if (candidates.size() < limit && q.length() > 1) {
+                candidates.addAll(getAlternativeCandidates(query, candidates));
             }
-            if(candidates.size() < limit) {
-                candidates.addAll(getAlternativeCandidates(query, candidates, spellChecker::typos));
+            if (candidates.isEmpty()) {
+                System.out.println(NO_MATCHES_MESSAGE);
             }
-            if(candidates.size() < limit) {
-                candidates.addAll(getAlternativeCandidates(query, candidates, spellChecker::swappedSeqChars));
+            StringBuilder result = new StringBuilder();
+            for (String candidate : candidates) {
+                result.append(candidate).append(" ");
             }
-//            if(candidates.size() < limit) {
-//                candidates.addAll(getAlternativeCandidates(query, candidates, spellChecker::missingCharAtStart));
-//            }
-//            if(candidates.size() < limit) {
-//                candidates.addAll(getAlternativeCandidates(query, candidates, spellChecker::additionalCharAtStart));
-//            }
-            System.out.println(candidates.isEmpty() ? NO_MATCHES_MESSAGE : String.join(" ", candidates));
+            System.out.println(result.toString().trim());
         }
         executor.shutdown();
     }
 
-    private Set<String> getAlternativeCandidates(
-            String query,
-            Set<String> result,
-            Function<String, Set<String>> getAlternativeCandidates) {
+    private Set<String> getAlternativeCandidates(final String query, Set<String> result) {
         if (result.size() < 10) {
-            Future<Set<String>> candidateOptions = executor.submit(() -> getAlternativeCandidates.apply(query)
-                    .stream()
-                    .flatMap(q -> findCandidates(trie, q).stream())
-                    .collect(Collectors.toSet()));
+            Future<Set<String>> candidateOptions = executor.submit(new Callable<Set<String>>() {
+                @Override
+                public Set<String> call() throws Exception {
+                    return getAltCandidates(query);
+                }
+            });
             try {
                 result.addAll(candidateOptions.get());
             } catch (InterruptedException | ExecutionException e) {
@@ -63,6 +53,15 @@ public class AutoCompleter {
             }
         }
         return result;
+    }
+
+    private Set<String> getAltCandidates(String query) {
+        Set<String> altQueries = spellChecker.typos(query);
+        Set<String> altCandidates = new HashSet<>();
+        for (String altQuery : altQueries) {
+            altCandidates.addAll(findCandidates(trie, altQuery));
+        }
+        return altCandidates;
     }
 
     private Set<String> findCandidates(Trie trie, String query) {

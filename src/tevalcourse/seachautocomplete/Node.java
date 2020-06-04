@@ -9,7 +9,8 @@ public class Node {
     private final Map<Character, Node> children;
 
     public Node() {
-        this(null, new HashMap<>());
+        this.word = null;
+        this.children =  new HashMap<>();
     }
 
     public Node(String word, Map<Character, Node> children) {
@@ -18,7 +19,9 @@ public class Node {
     }
 
     public Node getChild(char c) {
-        children.putIfAbsent(c, new Node());
+        if (!children.containsKey(c)) {
+            children.put(c, new Node());
+        }
         return children.get(c);
     }
 
