@@ -1,13 +1,6 @@
 package tevalcourse.flights.graph;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
@@ -37,25 +30,31 @@ public class FlightFinder {
     }
 
     public List<Route> findConnections(String start, String dest, int limit) {
-        if (!graph.containsKey(start) || !graph.containsKey(dest)) {
+        if (!graph.containsKey(start)) {
             return Collections.emptyList();
         }
         List<Route> result = findConnections(getInitialTraversalQueue(start), new ArrayList<>(), dest, limit);
-        result.sort(routeComparator);
-        return result;
+        return result.stream().sorted(routeComparator).limit(limit).collect(Collectors.toList());
     }
 
     private List<Route> findConnections(Queue<Route> toTraverse, List<Route> result, String dest, int limit) {
-        if (toTraverse.isEmpty() || result.size() == limit) return result;
-        else {
-            Route route = toTraverse.poll();
-            if (route.getAirports().getLast().equals(dest)) {
-                result.add(route);
-            } else {
-                toTraverse.addAll(processRoute(graph, route));
-            }
-            return findConnections(toTraverse, result, dest, limit);
+        if (toTraverse.isEmpty()) {
+            return result;
         }
+        Route route = toTraverse.poll();
+        Route maxSoFar = getMaxSoFar(result);
+        Route minToTraverse = getMinToTraverse(toTraverse);
+        if (result.size() == limit) {
+            if (maxSoFar != null && minToTraverse != null && maxSoFar.getPrice() < minToTraverse.getPrice()) {
+                return result;
+            }
+        }
+        if (route.getAirports().getLast().equals(dest)) {
+            result.add(route);
+        } else if(maxSoFar == null || maxSoFar.getPrice() > route.getPrice()){
+            toTraverse.addAll(processRoute(graph, route));
+        }
+        return findConnections(toTraverse, result, dest, limit);
     }
 
     private Queue<Route> getInitialTraversalQueue(String start) {
@@ -73,21 +72,33 @@ public class FlightFinder {
             return nextAirport.getAllConnections()
                     .stream()
                     .map(edge -> {
-                        LinkedList<String> airports = new LinkedList<>(route.getAirports());
-                        airports.add(edge.getNode().getAirportCode());
-                        return new Route(route.getPrice() + edge.getPrice(), airports);
+                        String airportCode = edge.getNode().getAirportCode();
+                        if (!route.getAirports().contains(airportCode)) {
+                            LinkedList<String> airports = new LinkedList<>(route.getAirports());
+                            airports.add(airportCode);
+                            return new Route(route.getPrice() + edge.getPrice(), airports);
+                        }
+                        return null;
                     })
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();
     }
 
-    private Integer getMaxSoFar(Map<String, List<Route>> toTraverse, String code) {
-        return toTraverse.get(code)
+    private Route getMaxSoFar(List<Route> routes) {
+        return routes
                 .stream()
-                .map(Route::getPrice)
-                .max(Integer::compareTo)
-                .orElse(0);
+                .max(routeComparator)
+                .orElse(null);
+    }
+
+
+    private Route getMinToTraverse(Queue<Route> routes) {
+        return routes
+                .stream()
+                .min(routeComparator)
+                .orElse(null);
     }
 
 }
