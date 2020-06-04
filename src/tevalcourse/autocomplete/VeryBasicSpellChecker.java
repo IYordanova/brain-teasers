@@ -1,4 +1,4 @@
-package tevalcourse.seachautocomplete;
+package tevalcourse.autocomplete;
 
 import java.util.Set;
 import java.util.HashSet;
