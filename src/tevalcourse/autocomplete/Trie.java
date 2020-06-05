@@ -1,7 +1,5 @@
 package tevalcourse.autocomplete;
 
-
-import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
 import java.util.LinkedList;

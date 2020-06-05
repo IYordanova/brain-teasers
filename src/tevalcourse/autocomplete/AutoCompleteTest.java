@@ -1,13 +1,26 @@
 package tevalcourse.autocomplete;
 
+import tevalcourse.BaseTestHelper;
+
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class AutoCompleteTest {
+public class AutoCompleteTest extends BaseTestHelper {
 
-    public static void main(String[] args) {
-        List<String> words = Arrays.asList("algo", "alter", "data", "datum", "dest");
+    public static void main(String[] args) throws IOException {
+        // empty dict
+        List<String> words = Collections.emptyList();
+        new AutoCompleter(words).solve(Collections.singletonList("asd"));
+        System.out.println();
+
+        // empty request
+        words = Collections.singletonList("asd");
+        new AutoCompleter(words).solve(Collections.emptyList());
+
+        // basic examples
+        words = Arrays.asList("algo", "alter", "data", "datum", "dest");
         new AutoCompleter(words).solve(Arrays.asList("blah", "algo", "a"));
         System.out.println();
 
@@ -15,6 +28,7 @@ public class AutoCompleteTest {
         new AutoCompleter(words).solve(Arrays.asList("tevh", "new", "techn", "compa", "elevato", "bie"));
         System.out.println();
 
+        // many alt typos
         words = Arrays.asList(
                 "smo", "sma", "smi",
                 "smp", "smd", "smr",
@@ -23,14 +37,14 @@ public class AutoCompleteTest {
                 "smogsadboafbkedscj", "smockingjsjaskjdak",
                 "smack", "smuggle", "smiling",
                 "SMUG", "smug", "smoke", "smirk", "the");
-        new AutoCompleter(words).solve(Arrays.asList("sm", "smm", "smol", "amal", "smockingj", "/", "smu", "TH", "te"));
+        new AutoCompleter(words).solve(Arrays.asList(
+                "sm", "smm", "smol", "amal",
+                "smockingj", "/", "smu", "TH", "te",
+                "smag"));
         System.out.println();
 
-        words = Collections.emptyList();
-        new AutoCompleter(words).solve(Arrays.asList("sm", "smol", "snails"));
-        System.out.println();
-
-        words = Arrays.asList("sm", "smol", "snails");
-        new AutoCompleter(words).solve(Collections.emptyList());
+        // regular dictionary
+        words = readFile("words");
+        new AutoCompleter(words).solve(Arrays.asList("acc"));
     }
 }
