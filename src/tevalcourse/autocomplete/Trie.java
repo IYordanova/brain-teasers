@@ -1,9 +1,12 @@
 package tevalcourse.autocomplete;
 
+
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.TreeSet;
+
 
 public class Trie {
     final Node root;
@@ -37,16 +40,20 @@ public class Trie {
     private TreeSet<String> getCandidates(Node node, int limit) {
         Deque<Node> queue = new LinkedList<>();
         queue.add(node);
-        TreeSet<String> result = new TreeSet<>();
-        while (!queue.isEmpty() && result.size() < limit) {
-            Node n = queue.pollFirst();
-            String word = n.getWord();
-            if (word != null) {
-                result.add(word);
-            }
-            queue.addAll(n.getChildNodes());
+        return findCandidates(queue, new TreeSet<>(), limit);
+    }
+
+    private TreeSet<String> findCandidates(Deque<Node> queue, TreeSet<String> result, int limit) {
+        if (queue.isEmpty() || result.size() == limit) {
+            return result;
         }
-        return result;
+        Node node = queue.pollFirst();
+        String word = node.getWord();
+        if (word != null) {
+            result.add(word);
+        }
+        queue.addAll(node.getChildNodes());
+        return findCandidates(queue, result, limit);
     }
 
     public TreeSet<String> find(String query, int limit) {

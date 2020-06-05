@@ -17,6 +17,9 @@ public class AutoCompleter {
     }
 
     public void solve(List<String> queries) {
+        if(queries.isEmpty()) {
+            System.out.println(NO_MATCHES_MESSAGE);
+        }
         for (String q : queries) {
             String query = q.toLowerCase();
             TreeSet<String> candidates = trie.find(query, limit);
