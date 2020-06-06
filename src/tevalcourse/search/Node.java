@@ -26,4 +26,9 @@ public class Node {
     public Map<String, Node> getChildren() {
         return children;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Node{titles=%s, children=%s}", titles, children);
+    }
 }
