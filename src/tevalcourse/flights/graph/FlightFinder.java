@@ -6,13 +6,9 @@ import java.util.stream.Collectors;
 
 public class FlightFinder {
     private final Map<String, Node> graph;
-    private final Comparator<Route> routeComparator = (r1, r2) -> {
-        int compare = Integer.compare(r1.getPrice(), r2.getPrice());
-        if (compare == 0) {
-            return Integer.compare(r1.getAirports().size(), r2.getAirports().size());
-        }
-        return compare;
-    };
+    private final Comparator<Route> routeComparator = Comparator.comparingInt(Route::getPrice)
+                .thenComparingInt(r -> r.getAirports().size())
+                .thenComparing(r -> String.join("", r.getAirports()));
 
     public FlightFinder(List<Flight> flights) {
         this.graph = buildGraph(flights);
@@ -51,7 +47,7 @@ public class FlightFinder {
         }
         if (route.getAirports().getLast().equals(dest)) {
             result.add(route);
-        } else if(maxSoFar == null || maxSoFar.getPrice() > route.getPrice()){
+        } else {
             toTraverse.addAll(processRoute(graph, route));
         }
         return findConnections(toTraverse, result, dest, limit);

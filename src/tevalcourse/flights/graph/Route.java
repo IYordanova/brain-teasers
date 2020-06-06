@@ -44,6 +44,6 @@ public class Route implements Comparable<Route> {
 
     @Override
     public String toString() {
-        return String.format("%s is %d", String.join(" ", airports), price);
+        return String.format("%s %d", String.join(" ", airports), price);
     }
 }

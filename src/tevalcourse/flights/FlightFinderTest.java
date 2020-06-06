@@ -28,10 +28,10 @@ public class FlightFinderTest extends BaseTestHelper {
 
     public static void main(String[] args) throws IOException {
         List<String> files = Arrays.asList(
-                "flights_1",
+//                "flights_1",
                 "flights_2",
-                "flights_3",
-                "flights_4",
+//                "flights_3",
+//                "flights_4",
                 "flights_5"
         );
         for (String file : files) {
