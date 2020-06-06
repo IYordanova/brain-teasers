@@ -1,6 +1,11 @@
 package tevalcourse.search;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.List;
+import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 public class Index {
@@ -18,7 +23,7 @@ public class Index {
                 String word = words.get(i);
                 root.getChildren().putIfAbsent(word, new Node());
                 Node current = root.getChildren().get(word);
-                for (int j = i+1; j < words.size(); j++) {
+                for (int j = i + 1; j < words.size(); j++) {
                     String nextWord = words.get(j);
                     current.getChildren().putIfAbsent(nextWord, new Node());
                     current = current.getChildren().get(nextWord);
@@ -28,7 +33,7 @@ public class Index {
         }
     }
 
-    List<String> extractWords(String page) {
+    private List<String> extractWords(String page) {
         return Arrays.stream(page.split("\\s+"))
                 .map(String::toLowerCase)
                 .sorted()
@@ -36,36 +41,23 @@ public class Index {
                 .collect(Collectors.toList());
     }
 
-    private List<String> findCandidates(Node node, List<String> keywords, int limit) {
-        Deque<Node> queue = new LinkedList<>();
-        queue.add(node);
-        List<String> result = new ArrayList<>();
-        while (!queue.isEmpty() && result.size() < limit) {
-            Node nextNode = queue.pollFirst();
-            List<String> titles = nextNode.getTitles();
-            if (titles != null) {
-                titles.stream()
-                    .filter(title -> Arrays.asList(title.split("\\s+")).containsAll(keywords))
-                    .forEach(result::add);
-            }
-            queue.addAll(nextNode.getChildren().values());
-        }
-        return result;
-    }
-
-    private List<String>  findCandidates(Deque<Node> queue, int limit, List<String> result) {
-        if (queue.isEmpty() ||  result.size() > limit) {
-            return result;
+    private List<String> findCandidates(Deque<Node> queue, int limit, List<String> result, List<String> keywords) {
+        if (queue.isEmpty() || result.size() >= limit) {
+            return result.stream().limit(limit).collect(Collectors.toList());
         } else {
             Node nextNode = queue.pollFirst();
             List<String> titles = nextNode.getTitles();
             if (titles != null && !titles.isEmpty()) {
-                result.addAll(titles);
+                result.addAll(titles
+                        .stream()
+                        .filter(title -> Arrays.asList(title.split("\\s+")).containsAll(keywords))
+                        .collect(Collectors.toList()));
             }
             queue.addAll(nextNode.getChildren().values());
-            return findCandidates(queue, limit, result);
+            return findCandidates(queue, limit, result, keywords);
         }
     }
+
     private Node findNode(Node index, List<String> keywords) {
         Node node = index;
         for (String keyword : keywords) {
@@ -85,6 +77,6 @@ public class Index {
         }
         Deque<Node> queue = new LinkedList<>();
         queue.add(node);
-        return findCandidates(queue, limit, new ArrayList<>());
+        return findCandidates(queue, limit, new ArrayList<>(), keywords);
     }
 }
