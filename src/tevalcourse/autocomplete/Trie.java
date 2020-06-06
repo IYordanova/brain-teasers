@@ -1,13 +1,14 @@
 package tevalcourse.autocomplete;
 
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
 import java.util.LinkedList;
-import java.util.TreeSet;
+import java.util.Set;
 
 
 public class Trie {
-    final Node root;
+    private final Node root;
 
     public Trie(List<String> words) {
         this.root = new Node();
@@ -35,14 +36,19 @@ public class Trie {
         return result;
     }
 
-    private TreeSet<String> getCandidates(Node node, int limit) {
-        Deque<Node> queue = new LinkedList<>();
-        queue.add(node);
-        return findCandidates(queue, new TreeSet<>(), limit);
+    public Set<String> find(String query, int limit) {
+        Node node = locateNode(root, query);
+        return getCandidates(node, limit);
     }
 
-    private TreeSet<String> findCandidates(Deque<Node> queue, TreeSet<String> result, int limit) {
-        if (queue.isEmpty() || result.size() == limit) {
+    private Set<String> getCandidates(Node node, int limit) {
+        Deque<Node> queue = new LinkedList<>();
+        queue.add(node);
+        return findCandidates(queue, new HashSet<>(), limit);
+    }
+
+    private Set<String> findCandidates(Deque<Node> queue, Set<String> result, int limit) {
+        if (queue.isEmpty() ) {
             return result;
         }
         Node node = queue.pollFirst();
@@ -52,10 +58,5 @@ public class Trie {
         }
         queue.addAll(node.getChildNodes());
         return findCandidates(queue, result, limit);
-    }
-
-    public TreeSet<String> find(String query, int limit) {
-        Node node = locateNode(root, query);
-        return getCandidates(node, limit);
     }
 }

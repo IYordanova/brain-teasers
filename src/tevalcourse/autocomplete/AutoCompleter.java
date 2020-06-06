@@ -1,8 +1,12 @@
 package tevalcourse.autocomplete;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 public class AutoCompleter {
 
@@ -17,31 +21,36 @@ public class AutoCompleter {
     }
 
     public void solve(List<String> queries) {
-        if(queries.isEmpty()) {
-            return;
-        }
-        for (String q : queries) {
-            String query = q.toLowerCase();
-            TreeSet<String> candidates = trie.find(query, limit);
-            if (candidates.size() < limit ) {
-                int leftToLimit = limit - candidates.size();
-                addAlternativeCandidates(query, candidates, leftToLimit);
-            }
-            System.out.println(candidates.isEmpty() ? NO_MATCHES_MESSAGE : String.join(" ", candidates));
-        }
+        solveHelper(queries, new ArrayList<>()).forEach(System.out::println);
     }
 
-    private void addAlternativeCandidates(final String query, Set<String> result, int leftToLimit) {
-        Set<String> altQueries = spellChecker.typos(query);
-        int newLimit = leftToLimit;
-        for (String altQuery : altQueries) {
-            Set<String> altCandidates = trie.find(altQuery, newLimit);
-            result.addAll(altCandidates);
-            newLimit -= altCandidates.size();
-            if (newLimit <= 0) {
-                break;
-            }
+    private List<String> solveHelper(List<String> queries, List<String> result) {
+        if (queries.isEmpty()) {
+            return result;
         }
+        String query = queries.get(0).toLowerCase();
+        Set<String> candidates = trie.find(query, limit);
+        if (candidates.size() < limit) {
+            int leftToLimit = limit - candidates.size();
+            addAlternativeCandidates(query, candidates);
+        }
+        result.add(candidates.isEmpty() ? NO_MATCHES_MESSAGE : String.join(" ", candidates.stream().limit(limit).collect(Collectors.toSet()))
+        );
+        return solveHelper(tail(queries), result);
+    }
+
+    private List<String> tail(List<String> queries) {
+        return queries.subList(1, queries.size());
+    }
+
+    private void addAlternativeCandidates(final String query, Set<String> result) {
+        Set<String> altQueries = spellChecker.typos(query);
+//        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        for (String altQuery : altQueries) {
+            Set<String> altCandidates = trie.find(altQuery, limit);
+            result.addAll(altCandidates);
+        }
+//        executor.invokeAll()
     }
 
 }
