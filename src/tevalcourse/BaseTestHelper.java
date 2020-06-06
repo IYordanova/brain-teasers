@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class BaseTestHelper {
+    protected static final String SEPARATOR = "----------------------------------";
+
     protected final static String ROOT_FILE_DIR = System.getProperty("user.dir")
             + System.getProperty("file.separator")
             + "resources";

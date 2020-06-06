@@ -1,6 +1,5 @@
 package tevalcourse.search;
 
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -19,10 +18,9 @@ public class Index {
                 String word = words.get(i);
                 root.getChildren().putIfAbsent(word, new Node());
                 Node current = root.getChildren().get(word);
-                for (int j = i + 1; j < words.size(); j++) {
+                for (int j = i+1; j < words.size(); j++) {
                     String nextWord = words.get(j);
                     current.getChildren().putIfAbsent(nextWord, new Node());
-                    current.getTitles().add(page);
                     current = current.getChildren().get(nextWord);
                 }
                 current.getTitles().add(page);
@@ -33,13 +31,15 @@ public class Index {
     List<String> extractWords(String page) {
         return Arrays.stream(page.split("\\s+"))
                 .map(String::toLowerCase)
+                .sorted()
+                .sequential()
                 .collect(Collectors.toList());
     }
 
-    private Set<String> findCandidates(Node node, List<String> keywords, int limit) {
+    private List<String> findCandidates(Node node, List<String> keywords, int limit) {
         Deque<Node> queue = new LinkedList<>();
         queue.add(node);
-        Set<String> result = new TreeSet<>();
+        List<String> result = new ArrayList<>();
         while (!queue.isEmpty() && result.size() < limit) {
             Node nextNode = queue.pollFirst();
             List<String> titles = nextNode.getTitles();
@@ -53,6 +53,19 @@ public class Index {
         return result;
     }
 
+    private List<String>  findCandidates(Deque<Node> queue, int limit, List<String> result) {
+        if (queue.isEmpty() ||  result.size() > limit) {
+            return result;
+        } else {
+            Node nextNode = queue.pollFirst();
+            List<String> titles = nextNode.getTitles();
+            if (titles != null && !titles.isEmpty()) {
+                result.addAll(titles);
+            }
+            queue.addAll(nextNode.getChildren().values());
+            return findCandidates(queue, limit, result);
+        }
+    }
     private Node findNode(Node index, List<String> keywords) {
         Node node = index;
         for (String keyword : keywords) {
@@ -64,12 +77,14 @@ public class Index {
         return node;
     }
 
-    public Set<String> find(String query, int limit) {
+    public List<String> find(String query, int limit) {
         List<String> keywords = extractWords(query);
         Node node = findNode(root, keywords);
         if (node == root) {
-            return Collections.emptySet();
+            return Collections.emptyList();
         }
-        return findCandidates(node, keywords, limit);
+        Deque<Node> queue = new LinkedList<>();
+        queue.add(node);
+        return findCandidates(queue, limit, new ArrayList<>());
     }
 }

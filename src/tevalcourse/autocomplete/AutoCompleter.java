@@ -19,14 +19,14 @@ public class AutoCompleter {
     }
 
     public void solve(List<String> queries) {
-        solveHelper(queries, new ArrayList<>()).forEach(System.out::println);
+        solveHelper(queries, new ArrayList<>(), 0).forEach(System.out::println);
     }
 
-    private List<String> solveHelper(List<String> queries, List<String> result) {
-        if (queries.isEmpty()) {
+    private List<String> solveHelper(List<String> queries, List<String> result, int i) {
+        if (i == queries.size()) {
             return result;
         }
-        String query = queries.get(0).toLowerCase();
+        String query = queries.get(i).toLowerCase();
         Set<String> candidates = trie.find(query, limit);
         if (candidates.size() < limit) {
             spellChecker.typos(query).forEach(altQuery -> candidates.addAll(trie.find(altQuery, limit)));
@@ -34,15 +34,11 @@ public class AutoCompleter {
         result.add(candidates.isEmpty()
                 ? NO_MATCHES_MESSAGE
                 : candidates.stream()
-                .sorted(Comparator.comparingInt(String::length).thenComparing(String::trim))
+                .sorted(Comparator.comparing(String::trim).thenComparingInt(String::length))
                 .sequential()
                 .limit(limit)
                 .collect(Collectors.joining(" ")));
-        return solveHelper(tail(queries), result);
-    }
-
-    private List<String> tail(List<String> queries) {
-        return queries.subList(1, queries.size());
+        return solveHelper(queries, result, ++i);
     }
 
 }
