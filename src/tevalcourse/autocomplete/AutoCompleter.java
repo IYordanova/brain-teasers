@@ -23,7 +23,7 @@ public class AutoCompleter {
         for (String q : queries) {
             String query = q.toLowerCase();
             TreeSet<String> candidates = trie.find(query, limit);
-            if (candidates.size() < limit && q.length() > 1) {
+            if (candidates.size() < limit ) {
                 int leftToLimit = limit - candidates.size();
                 addAlternativeCandidates(query, candidates, leftToLimit);
             }

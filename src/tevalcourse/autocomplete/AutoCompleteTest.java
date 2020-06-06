@@ -20,8 +20,8 @@ public class AutoCompleteTest extends BaseTestHelper {
         new AutoCompleter(words).solve(Collections.emptyList());
 
         // basic examples
-        words = Arrays.asList("algo", "alter", "data", "datum", "dest");
-        new AutoCompleter(words).solve(Arrays.asList("blah", "algo", "a"));
+        words = Arrays.asList("algo", "alter", "data", "datum", "dest", "world", "could", "would");
+        new AutoCompleter(words).solve(Arrays.asList("blah", "algo", "a", "vorl", "would"));
         System.out.println();
 
         words = Arrays.asList("tech", "TECH", "computer", "technology", "elevate", "compute", "elevator", "company", "view");
@@ -33,7 +33,7 @@ public class AutoCompleteTest extends BaseTestHelper {
                 "smo", "sma", "smi",
                 "smp", "smd", "smr",
                 "smh", "smf", "smw",
-                "smq", "smalpp", "smalooo",
+                "smq", "smalpp", "smalpp", "smalpp", "smalpp", "smalpp", "smalpp", "smalooo",
                 "smogsadboafbkedscj", "smockingjsjaskjdak",
                 "smack", "smuggle", "smiling",
                 "SMUG", "smug", "smoke", "smirk", "the");
@@ -45,6 +45,6 @@ public class AutoCompleteTest extends BaseTestHelper {
 
         // regular dictionary
         words = readFile("words");
-        new AutoCompleter(words).solve(Arrays.asList("acc"));
+        new AutoCompleter(words).solve(Arrays.asList("acc", "woman,", "a", "", "acc"));
     }
 }
