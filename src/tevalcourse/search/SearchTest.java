@@ -10,7 +10,7 @@ public class SearchTest extends BaseTestHelper {
 
     public static void main(String[] args) throws IOException {
         List<String> index;
-
+//
 //        index = readFile("index_1");
 //        new Search(index).search(Arrays.asList(
 //                "world cup football",
@@ -22,12 +22,24 @@ public class SearchTest extends BaseTestHelper {
 
         index = readFile("index_2");
         new Search(index).search(Arrays.asList(
-                "someTHing",
-                "here ",
-                "there",
-                "launching",
-                "program",
-                "australian name"));
+                "someTHing"
+//                "here ",
+//                "there",
+//                "there     ",
+//                "    there",
+//                "launching",
+//                "program",
+//                "australian name",
+//                "australian name missingword",
+//                "newest here",
+//                "",
+//                "a",
+//                "something something"
+//                "videos viewed",
+//                "are youtube",
+//                "start middle end",
+//                "a short title"
+        ));
         System.out.println(SEPARATOR);
     }
 

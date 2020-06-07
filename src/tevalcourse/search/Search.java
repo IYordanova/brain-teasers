@@ -19,6 +19,8 @@ public class Search {
                     resultSet.stream()
                             .sorted(Comparator.comparingInt(s ->((String)s).split("\\s+").length)
                                     .thenComparing(s -> (String)s))
+                            .sequential()
+                            .limit(LIMIT)
                             .forEach(System.out::println);
                 });
     }
