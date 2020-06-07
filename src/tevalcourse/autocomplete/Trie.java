@@ -12,9 +12,7 @@ public class Trie {
 
     public Trie(List<String> words) {
         this.root = new Node();
-        for (String word : words) {
-            insertWord(root, word);
-        }
+        words.forEach(word -> insertWord(root, word.toLowerCase().trim()));
     }
 
     private void insertWord(Node root, String word) {
@@ -36,18 +34,18 @@ public class Trie {
         return result;
     }
 
-    public Set<String> find(String query, int limit) {
+    public Set<String> find(String query) {
         Node node = locateNode(root, query);
-        return getCandidates(node, limit);
+        return getCandidates(node);
     }
 
-    private Set<String> getCandidates(Node node, int limit) {
+    private Set<String> getCandidates(Node node) {
         Deque<Node> queue = new LinkedList<>();
         queue.add(node);
-        return findCandidates(queue, new HashSet<>(), limit);
+        return findCandidates(queue, new HashSet<>());
     }
 
-    private Set<String> findCandidates(Deque<Node> queue, Set<String> result, int limit) {
+    private Set<String> findCandidates(Deque<Node> queue, Set<String> result) {
         if (queue.isEmpty() ) {
             return result;
         }
@@ -57,6 +55,6 @@ public class Trie {
             result.add(word);
         }
         queue.addAll(node.getChildNodes());
-        return findCandidates(queue, result, limit);
+        return findCandidates(queue, result);
     }
 }
