@@ -1,6 +1,8 @@
 package tevalcourse.autocomplete;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,13 +27,19 @@ public class AutoCompleter {
         if (i == queries.size()) {
             return result;
         }
-        String query = queries.get(i).toLowerCase();
+        String query = queries.get(i).toLowerCase().trim();
         Set<String> candidates = trie.find(query);
-        spellChecker.typos(query).forEach(altQuery -> candidates.addAll(trie.find(altQuery)));
+        if (candidates.size() < LIMIT){
+            Set<String> altQueries = spellChecker.typos(query);
+            Iterator<String> it = altQueries.iterator();
+            while (candidates.size() < LIMIT && it.hasNext()) {
+                candidates.addAll(trie.find(it.next()));
+            }
+        }
         result.add(candidates.isEmpty()
                 ? NO_MATCHES_MESSAGE
                 : candidates.stream()
-                .sorted()
+                .sorted(Comparator.naturalOrder())
                 .sequential()
                 .limit(LIMIT)
                 .collect(Collectors.joining(" ")));

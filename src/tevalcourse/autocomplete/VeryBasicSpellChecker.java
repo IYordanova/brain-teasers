@@ -1,7 +1,7 @@
 package tevalcourse.autocomplete;
 
 import java.util.Set;
-import java.util.HashSet;
+import java.util.TreeSet;
 
 public class VeryBasicSpellChecker {
 
@@ -9,7 +9,7 @@ public class VeryBasicSpellChecker {
 
 
     Set<String> typos(String input) {
-        Set<String> toReturn = new HashSet<>();
+        Set<String> toReturn = new TreeSet<>();
         char[] chars = input.toCharArray();
         for (int i = 0; i < chars.length; i++) {
             for (char ch : ALPHABET) {

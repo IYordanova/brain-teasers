@@ -23,25 +23,21 @@ public class AutoCompleteTest extends BaseTestHelper {
 //        new AutoCompleter(words).solve(Collections.emptyList());
 //        System.out.println(SEPARATOR);
 //
-//        // basic examples
-//        words = Arrays.asList("tech", "TECH", "computer", "technology", "elevate", "compute", "elevator", "company", "view");
-//        new AutoCompleter(words).solve(Arrays.asList("tevh", "new", "techn", "compa", "elevato", "bie"));
-//        System.out.println(SEPARATOR);
+        // basic examples
+        words = Arrays.asList("tech", "TECH", "computer", "technology", "elevate", "compute", "elevator", "company", "view");
+        new AutoCompleter(words).solve(Arrays.asList("tevh", "new", "techn", "compa", "elevato", "bie"));
+        System.out.println(SEPARATOR);
 
         // many alt typos
-        words = readFile("dummyWords");
+        words = readFile("dummyWords_1");
         new AutoCompleter(words).solve(Arrays.asList(
-                "tec",
-                "tesh",
-                "eec",
-                "sech"
-
+                "te"
         ));
         System.out.println(SEPARATOR);
 
-        // regular dictionary
-        words = readFile("words");
-        new AutoCompleter(words).solve(Arrays.asList("acc", "woman,", "a", "", "acc"));
+//        // regular dictionary
+//        words = readFile("words");
+//        new AutoCompleter(words).solve(Arrays.asList("acc", "woman,", "a", "", "acc", "wripe"));
     }
 
 }
