@@ -15,7 +15,8 @@ public class Search {
         queries.stream()
                 .map(query -> index.find(query, LIMIT))
                 .forEach(resultSet -> {
-                    System.out.println(resultSet.size());
+                    int size = resultSet.size();
+                    System.out.println(Math.min(size, 10));
                     resultSet.stream()
                             .sorted(Comparator.comparingInt(s ->((String)s).split("\\s+").length)
                                     .thenComparing(s -> (String)s))

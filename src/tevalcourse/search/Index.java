@@ -48,7 +48,7 @@ public class Index {
     }
 
     private List<String> findCandidates(Deque<Node> queue, int limit, List<String> result, List<String> keywords) {
-        if (queue.isEmpty() || result.size() >= limit) {
+        if (queue.isEmpty()) {
             return result;
         } else {
             Node nextNode = queue.pollFirst();
