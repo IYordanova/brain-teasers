@@ -17,7 +17,8 @@ public class Trie {
 
     private void insertWord(Node root, String word) {
         Node currentNode = root;
-        for (char c : word.toCharArray()) {
+        char[] chars = word.toCharArray();
+        for (char c : chars) {
             currentNode = currentNode.getChild(c);
         }
         currentNode.updateWord(word);
@@ -42,19 +43,16 @@ public class Trie {
     private Set<String> getCandidates(Node node) {
         Deque<Node> queue = new LinkedList<>();
         queue.add(node);
-        return findCandidates(queue, new HashSet<>());
+        Set<String> result = new HashSet<>();
+        while (!queue.isEmpty()) {
+            Node currentNode = queue.pollFirst();
+            String word = currentNode.getWord();
+            if (word != null) {
+                result.add(word);
+            }
+            queue.addAll(currentNode.getChildNodes());
+        }
+        return result;
     }
 
-    private Set<String> findCandidates(Deque<Node> queue, Set<String> result) {
-        if (queue.isEmpty() ) {
-            return result;
-        }
-        Node node = queue.pollFirst();
-        String word = node.getWord();
-        if (word != null) {
-            result.add(word);
-        }
-        queue.addAll(node.getChildNodes());
-        return findCandidates(queue, result);
-    }
 }
