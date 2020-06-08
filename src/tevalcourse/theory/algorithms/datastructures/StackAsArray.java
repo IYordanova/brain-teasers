@@ -49,11 +49,6 @@ public class StackAsArray<T> implements Iterable<T> {
         return new ReverseArrayIterator();
     }
 
-    @Override
-    public void forEach(Consumer<? super T> action) {
-
-    }
-
     private class ReverseArrayIterator implements Iterator<T> {
         private int i = N;
 
