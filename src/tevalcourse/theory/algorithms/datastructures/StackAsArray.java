@@ -2,7 +2,6 @@ package tevalcourse.theory.algorithms.datastructures;
 
 
 import java.util.Iterator;
-import java.util.function.Consumer;
 
 /**
  * - every operation takes constant amortized time (resizing)
@@ -11,6 +10,7 @@ import java.util.function.Consumer;
 public class StackAsArray<T> implements Iterable<T> {
     private T[] array;
     private int N = 0;
+
 
     public StackAsArray() {
         this.array = (T[]) new Object[1];
