@@ -18,4 +18,19 @@ public class BaseTestHelper {
             return reader.lines().collect(Collectors.toList());
         }
     }
+
+    protected static void writeFile(String fileName, List<String> lines) throws IOException {
+        try (OutputStreamWriter outputStreamWriter =
+                     new OutputStreamWriter(new FileOutputStream(new File(ROOT_FILE_DIR, fileName)));
+             BufferedWriter writer = new BufferedWriter(outputStreamWriter)) {
+            lines.forEach(line -> {
+                try {
+                    writer.write(line + "\n");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+    }
+
 }
