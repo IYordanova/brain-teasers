@@ -1,7 +1,6 @@
 package tevalcourse.autocomplete;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -20,6 +19,10 @@ public class AutoCompleter {
     }
 
     public void solve(List<String> queries) {
+        if (queries.isEmpty()) {
+            System.out.println(NO_MATCHES_MESSAGE);
+            return;
+        }
         solveHelper(queries, new ArrayList<>(), 0).forEach(System.out::println);
     }
 
@@ -28,18 +31,22 @@ public class AutoCompleter {
             return result;
         }
         String query = queries.get(i).toLowerCase().trim();
-        Set<String> candidates = trie.find(query);
+        if (query.isBlank()) {
+            result.add(NO_MATCHES_MESSAGE);
+            return solveHelper(queries, result, ++i);
+        }
+        Set<String> candidates = trie.find(query, LIMIT);
         if (candidates.size() < LIMIT){
             Set<String> altQueries = spellChecker.typos(query);
             Iterator<String> it = altQueries.iterator();
             while (candidates.size() < LIMIT && it.hasNext()) {
-                candidates.addAll(trie.find(it.next()));
+                candidates.addAll(trie.find(it.next(), LIMIT));
             }
         }
         result.add(candidates.isEmpty()
                 ? NO_MATCHES_MESSAGE
                 : candidates.stream()
-                .sorted(Comparator.naturalOrder())
+                .sorted()
                 .sequential()
                 .limit(LIMIT)
                 .collect(Collectors.joining(" ")));

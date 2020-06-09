@@ -35,12 +35,7 @@ public class Trie {
         return result;
     }
 
-    public Set<String> find(String query) {
-        Node node = locateNode(root, query);
-        return getCandidates(node);
-    }
-
-    private Set<String> getCandidates(Node node) {
+    private Set<String> getCandidates(Node node, int limit) {
         Deque<Node> queue = new LinkedList<>();
         queue.add(node);
         Set<String> result = new HashSet<>();
@@ -49,10 +44,18 @@ public class Trie {
             String word = currentNode.getWord();
             if (word != null) {
                 result.add(word);
+                if(result.size() >= limit) {
+                    break;
+                }
             }
             queue.addAll(currentNode.getChildNodes());
         }
         return result;
+    }
+
+    public Set<String> find(String query, int limit) {
+        Node node = locateNode(root, query);
+        return getCandidates(node, limit);
     }
 
 }
