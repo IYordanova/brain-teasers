@@ -4,9 +4,7 @@ public class AlgorithmAnalysis {
     /*  Complexity:
 
      A) Tilde approximation -> g(N)/f(N) ~ 1 (approaches 1) as N grows
-
      B) Order of growth -> g(N) ~ af(N)
-
      C) Cost model -> defining the base operations
 
       ------ Name ------ Order of Growth ------ Description ------ Example ------
@@ -17,7 +15,7 @@ public class AlgorithmAnalysis {
          4. Linearithmic       NlogN       divide and conquer     mergesort
          5. Quadratic          N^2         double loop            check all pairs
          6. Cubic              N^3         triple loop            check all triples
-         7. Exponential        2^N         exhasutive search      check all subsets
+         7. Exponential        2^N         exhaustive search      check all subsets
      */
 
 
@@ -35,13 +33,9 @@ public class AlgorithmAnalysis {
          7. double           8
 
      B) Objects - sum of all fields + a typical overhead of 16B + padded to multiple of 8
-
      C) References - usually ref to an address so 8B (64 bit machine)
-
      D) Linked Lists - Node(item + next + obj overhead + ref to the enclosing instance)
-
-     E) Arrays - implemented as objects, so N*type size + obj overhead + size overhead + padding
-
+     E) Arrays - implemented as objects, so N*type size + obj overhead + size overhead + padding (array overhead 24B)
      F) Strings - obj overhead, reference to char array, hash, padding
      */
 
@@ -51,10 +45,41 @@ public class AlgorithmAnalysis {
      A) represented by array of ints, id[], where the item is it's index and the values are initially same as  the index
      B) 2 items are considered connected if their values in the id[] are equal
      C) connecting 2 items p and q is representing by changing the values that equal to id[p] to the one of id[q]
+     */
 
 
+    /* The scientific method applied to algorithms:
+
+     1) Observe - some feature of the natural world
+     2) Hypothesize - a model that is consistent with the observations
+     3) Predict - events using the hypothesis
+     4) Verify - the predictions by making further observations
+     5) Validate - by repeating until the hypothesis and observations agree
+
+     Principles:
+     A) reproducible experiments
+     B) hypothesises must be falsifiable
+
+     Example: the 3-sum problem
+
+     Notations:
+     0) Tilde     - ~10N^2 learning term              - provide approximate model
+     1) Big Theta - O(N^2) asymptotic order of growth -  used to classify algorithms
+     2) Big Oh    - O(N^2) and smaller                -  used to determine an upper bound
+     3) Big Omega - O(N^2) and larger                 -  used to determine a lower bound
 
      */
+
+    /* Memory:
+        Bit -  0 or 1
+        Byte - 8 bits
+        Megabyte (MB) - 2^20 bytes
+        Gigabytes (GB) - 2^30 bytes
+
+        32 bit machines - 4 byte pointers
+        64 bit machines - 8 byte pointers
+     */
+
 }
 
 
