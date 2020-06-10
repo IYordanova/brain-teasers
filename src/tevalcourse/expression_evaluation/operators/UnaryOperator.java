@@ -1,4 +1,4 @@
-package tevalcourse.exprEval.operators;
+package tevalcourse.expression_evaluation.operators;
 
 import java.util.Objects;
 import java.util.function.Function;

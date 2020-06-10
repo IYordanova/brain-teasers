@@ -1,4 +1,4 @@
-package tevalcourse.exprEval;
+package tevalcourse.expression_evaluation;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package tevalcourse.exprEval.operators;
+package tevalcourse.expression_evaluation.operators;
 
 public interface Operator {
 

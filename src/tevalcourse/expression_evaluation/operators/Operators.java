@@ -1,4 +1,4 @@
-package tevalcourse.exprEval.operators;
+package tevalcourse.expression_evaluation.operators;
 
 import java.util.Map;
 import java.util.Optional;

@@ -1,6 +1,6 @@
-package tevalcourse.exprEval;
+package tevalcourse.expression_evaluation;
 
-import tevalcourse.exprEval.operators.Operators;
+import tevalcourse.expression_evaluation.operators.Operators;
 
 import java.util.ArrayList;
 import java.util.List;

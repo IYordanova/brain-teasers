@@ -1,7 +1,7 @@
-package tevalcourse.exprEval;
+package tevalcourse.expression_evaluation;
 
-import tevalcourse.exprEval.operators.Operator;
-import tevalcourse.exprEval.operators.Operators;
+import tevalcourse.expression_evaluation.operators.Operator;
+import tevalcourse.expression_evaluation.operators.Operators;
 
 import java.text.DecimalFormat;
 import java.util.List;

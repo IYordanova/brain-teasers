@@ -1,4 +1,4 @@
-package tevalcourse.mergeArrs;
+package tevalcourse.merge_arrays;
 
 import java.util.ArrayList;
 import java.util.Arrays;
