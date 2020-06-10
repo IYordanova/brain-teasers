@@ -24,10 +24,6 @@ public class MathExpression {
             this.function = function;
         }
 
-        public String getSign() {
-            return sign;
-        }
-
         public Double apply(int a, int b) {
             return function.apply(a, b);
         }
