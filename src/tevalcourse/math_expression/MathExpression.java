@@ -6,14 +6,14 @@ import java.util.function.BiFunction;
 public class MathExpression {
 
     enum Operator {
-        PLUS("+", (a, b) -> Double.valueOf(a + b)),
-        MINUS("-", (a, b) -> Double.valueOf(a - b)),
-        MULTIPLY("*", (a, b) -> Double.valueOf(a * b)),
+        PLUS("+", (a, b) -> (double) (a + b)),
+        MINUS("-", (a, b) -> (double) (a - b)),
+        MULTIPLY("*", (a, b) -> ((double) a) * b),
         DIVIDE("/", (a, b) -> {
             if (b == 0) {
                 throw new IllegalArgumentException(String.format("Can't divide by %d", b));
             }
-            return Double.valueOf((double) a / b);
+            return ((double) a) / b;
         });
 
         private final String sign;
@@ -77,9 +77,10 @@ public class MathExpression {
 //        Scanner scanner = new Scanner(System.in);
 //        String s = scanner.nextLine();
 //        scanner.close();
-
         try {
-            double result = evaluateMathExpression("8 + 10");
+            double result = evaluateMathExpression("123456 *  123456");
+            System.out.println(result);
+            result = evaluateMathExpression("123456 / 0");
             System.out.println(result);
         } catch (NumberFormatException e) {
             System.out.println("NumberFormatException " + e.getMessage());
