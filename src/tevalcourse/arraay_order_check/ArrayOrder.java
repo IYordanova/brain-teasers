@@ -33,17 +33,12 @@ public class ArrayOrder extends BaseTestHelper {
 
     private static boolean isSorted(int[] array, BiPredicate<Integer, Integer> inOrder) {
         int length = array.length;
-        int first = array[0];
-        boolean allDuplicates = first == array[1];
         for (int i = 0; i < length - 1; i++) {
             if (inOrder.test(array[i], array[i + 1])) {
                 return false;
             }
-            if (allDuplicates && array[i] != first) {
-                allDuplicates = false;
-            }
         }
-        return !allDuplicates;
+        return true;
     }
 
 
@@ -84,7 +79,7 @@ public class ArrayOrder extends BaseTestHelper {
         numbers = new int[]{-1, -1, -1};
         System.out.println(String.format("Is sorted %d", checkArrayOrder(numbers)));
 
-        numbers = new int[]{4, 1, 1, 1, 1};
+        numbers = new int[]{4, 11, 6, 2, 12};
         System.out.println(String.format("Is sorted %d", checkArrayOrder(numbers)));
     }
 }
