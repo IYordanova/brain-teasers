@@ -1,4 +1,4 @@
-package tevalcourse.arraay_order_check;
+package tevalcourse.array_order_check;
 
 import tevalcourse.BaseTestHelper;
 
