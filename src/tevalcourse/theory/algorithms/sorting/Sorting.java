@@ -3,6 +3,8 @@ package tevalcourse.theory.algorithms.sorting;
 
 import edu.princeton.cs.algs4.StdRandom;
 
+import java.util.Arrays;
+
 public class Sorting {
 
     /* Selection Sort:
@@ -115,7 +117,7 @@ public class Sorting {
                   }
             - stop if already sorted - if biggest item in first half less than the smallest on the right
                 adding before the call to merge in sort:
-                  if(!less(a[mid+1], a[mid]) {
+                  if(!less(a[mid+1], a[mid])) {
                     return;
                   }
             - eliminate copy to the aux array - switching between the roles of the 2
@@ -185,5 +187,27 @@ public class Sorting {
        - insertion and merge sort are stable
        - selection sort and shell sort are NOT stable
      */
+
+
+    /* Combinations
+     */
+
+    private static void combinationUtil(int[] arr, int[] data, int start, int end, int index, int r) {
+        if (index == r) {
+            System.out.println(Arrays.toString(data));
+            return;
+        }
+
+        for (int i = start; i <= end && end - i + 1 >= r - index; i++) {
+            data[index] = arr[i];
+            combinationUtil(arr, data, i + 1, end, index + 1, r);
+        }
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+        int r = 4;
+        combinationUtil(arr, new int[r], 0, arr.length - 1, 0, r);
+    }
 
 }
