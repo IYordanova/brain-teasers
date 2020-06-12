@@ -11,15 +11,35 @@ public class BruteCollinearPoints {
 
 
     public BruteCollinearPoints(Point[] points) {
-        if (points == null) {
+        findLineSegments(getValidatedInput(points));
+    }
+
+    private Point[] getValidatedInput(Point[] inputPoints) {
+        if (inputPoints == null) {
             throw new IllegalArgumentException();
         }
-        findLineSegments(Arrays.copyOf(points, points.length));
+
+        int inputLength = inputPoints.length;
+        Point[] points = Arrays.copyOf(inputPoints, inputLength);
+        Arrays.sort(points);
+        if (points[0] == null) {
+            throw new IllegalArgumentException();
+        }
+
+        for (int i = 1; i < inputLength; i++) {
+            Point point1 = points[i];
+            if (point1 == null) {
+                throw new IllegalArgumentException();
+            }
+            if (point1.compareTo(points[i - 1]) == 0) {
+                throw new IllegalArgumentException();
+            }
+        }
+        return points;
     }
 
     private void findLineSegments(Point[] points) {
         int length = points.length;
-        Arrays.sort(points);
         combinationUtil(points, new Point[POINTS_IN_LINE], 0, length - 1, 0);
     }
 

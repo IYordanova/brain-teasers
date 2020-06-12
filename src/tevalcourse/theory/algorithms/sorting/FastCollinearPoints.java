@@ -11,10 +11,31 @@ public class FastCollinearPoints {
 
 
     public FastCollinearPoints(Point[] points) {
-        if (points == null) {
+        findLineSegments(getValidatedInput(points));
+    }
+
+    private Point[] getValidatedInput(Point[] inputPoints) {
+        if (inputPoints == null) {
             throw new IllegalArgumentException();
         }
-        findLineSegments(Arrays.copyOf(points, points.length));
+
+        int inputLength = inputPoints.length;
+        Point[] points = Arrays.copyOf(inputPoints, inputLength);
+        Arrays.sort(points);
+        if (points[0] == null) {
+            throw new IllegalArgumentException();
+        }
+
+        for (int i = 1; i < inputLength; i++) {
+            Point point1 = points[i];
+            if (point1 == null) {
+                throw new IllegalArgumentException();
+            }
+            if (point1.compareTo(points[i - 1]) == 0) {
+                throw new IllegalArgumentException();
+            }
+        }
+        return points;
     }
 
     private void findLineSegments(Point[] points) {
@@ -36,23 +57,7 @@ public class FastCollinearPoints {
                 psSlope = p.slopeTo(s);
 
                 if (pqSlope == prSlope && pqSlope == psSlope && prSlope == psSlope) {
-                    Point[] quadruple = new Point[] {p, q, r, s};
-                    Arrays.sort(quadruple);
-                    lineSegments.add(new LineSegment(quadruple[0], quadruple[3]));
-                    continue;
-                }
-            }
-            if (i >= POINTS_IN_LINE) {
-                q = copy[i - 1];
-                r = copy[i - 2];
-                s = copy[i - 3];
-
-                pqSlope = p.slopeTo(q);
-                prSlope = p.slopeTo(r);
-                psSlope = p.slopeTo(s);
-
-                if (pqSlope == prSlope && pqSlope == psSlope && prSlope == psSlope) {
-                    Point[] quadruple = new Point[] {p, q, r, s};
+                    Point[] quadruple = {p, q, r, s};
                     Arrays.sort(quadruple);
                     lineSegments.add(new LineSegment(quadruple[0], quadruple[3]));
                 }

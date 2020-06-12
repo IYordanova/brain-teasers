@@ -130,29 +130,20 @@ public class Point implements Comparable<Point> {
             points[i] = new Point(x, y);
         }
 
-        // draw the points
-//        StdDraw.enableDoubleBuffering();
-//        StdDraw.setXscale(0, 32768);
-//        StdDraw.setYscale(0, 32768);
-//        for (Point p : points) {
-//            p.draw();
-//        }
-//        StdDraw.show();
-
         // print and draw the line segments
+        long start = System.nanoTime();
         BruteCollinearPoints bruteCollinear = new BruteCollinearPoints(points);
         for (LineSegment segment : bruteCollinear.segments()) {
             StdOut.println(segment);
-//            segment.draw();
         }
-//        StdDraw.show();
+        System.out.println(System.nanoTime() - start);
 
         // print and draw the line segments
+        start = System.nanoTime();
         FastCollinearPoints fastCollinear = new FastCollinearPoints(points);
         for (LineSegment segment : fastCollinear.segments()) {
             StdOut.println(segment);
-//            segment.draw();
         }
-//        StdDraw.show();
+        System.out.println(System.nanoTime() - start);
     }
 }
