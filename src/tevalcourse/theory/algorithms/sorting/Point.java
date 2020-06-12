@@ -139,7 +139,7 @@ public class Point implements Comparable<Point> {
 
         // print and draw the line segments
         long start = System.nanoTime();
-        BruteCollinearPoints bruteCollinear = new BruteCollinearPoints(new Point[]{null});
+        BruteCollinearPoints bruteCollinear = new BruteCollinearPoints(points);
         for (LineSegment segment : bruteCollinear.segments()) {
             StdOut.println(segment);
         }

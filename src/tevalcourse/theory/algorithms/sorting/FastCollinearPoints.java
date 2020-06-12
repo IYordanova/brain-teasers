@@ -6,7 +6,6 @@ import java.util.List;
 
 public class FastCollinearPoints {
 
-    private static final int POINTS_IN_LINE = 4;
     private final List<LineSegment> lineSegments = new ArrayList<>();
 
 
@@ -21,17 +20,14 @@ public class FastCollinearPoints {
 
         int inputLength = inputPoints.length;
         Point[] points = Arrays.copyOf(inputPoints, inputLength);
-        Arrays.sort(points);
-        if (points[0] == null) {
-            throw new IllegalArgumentException();
-        }
-
-        for (int i = 1; i < inputLength; i++) {
-            Point point1 = points[i];
-            if (point1 == null) {
+        for (int i = 0; i < inputLength; i++) {
+            if (points[i] == null) {
                 throw new IllegalArgumentException();
             }
-            if (point1.compareTo(points[i - 1]) == 0) {
+        }
+        Arrays.sort(points);
+        for (int i = 1; i < inputLength; i++) {
+            if (points[i].compareTo(points[i - 1]) == 0) {
                 throw new IllegalArgumentException();
             }
         }
@@ -40,26 +36,28 @@ public class FastCollinearPoints {
 
     private void findLineSegments(Point[] points) {
         int length = points.length;
-        for (int i = 0; i < length; i++) {
-            Point p = points[i];
+        List<Point> added = new ArrayList<>();
+        for (Point p : points) {
             Point[] copy = Arrays.copyOf(points, points.length);
             Arrays.sort(copy, p.slopeOrder());
 
-            Point q, r, s;
-            double pqSlope, prSlope, psSlope;
-            if (i < length - 3) {
-                q = copy[i + 1];
-                r = copy[i + 2];
-                s = copy[i + 3];
+            Point q = copy[length - 3];
+            Point r = copy[length - 2];
+            Point s = copy[length - 1];
 
-                pqSlope = p.slopeTo(q);
-                prSlope = p.slopeTo(r);
-                psSlope = p.slopeTo(s);
+            double pqSlope = p.slopeTo(q);
+            double prSlope = p.slopeTo(r);
+            double psSlope = p.slopeTo(s);
 
-                if (pqSlope == prSlope && pqSlope == psSlope && prSlope == psSlope) {
-                    Point[] quadruple = {p, q, r, s};
-                    Arrays.sort(quadruple);
-                    lineSegments.add(new LineSegment(quadruple[0], quadruple[3]));
+            if (pqSlope == prSlope && pqSlope == psSlope && prSlope == psSlope) {
+                Point[] quadruple = {p, q, r, s};
+                Arrays.sort(quadruple);
+                Point start = quadruple[0];
+                Point end = quadruple[3];
+                if (!added.containsAll(List.of(start, end))) {
+                    lineSegments.add(new LineSegment(start, end));
+                    added.add(start);
+                    added.add(end);
                 }
             }
         }

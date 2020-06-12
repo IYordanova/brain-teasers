@@ -21,17 +21,14 @@ public class BruteCollinearPoints {
 
         int inputLength = inputPoints.length;
         Point[] points = Arrays.copyOf(inputPoints, inputLength);
-        Arrays.sort(points);
-        if (points[0] == null) {
-            throw new IllegalArgumentException();
-        }
-
-        for (int i = 1; i < inputLength; i++) {
-            Point point1 = points[i];
-            if (point1 == null) {
+        for (int i = 0; i < inputLength; i++) {
+            if (points[i] == null) {
                 throw new IllegalArgumentException();
             }
-            if (point1.compareTo(points[i - 1]) == 0) {
+        }
+        Arrays.sort(points);
+        for (int i = 1; i < inputLength; i++) {
+            if (points[i].compareTo(points[i - 1]) == 0) {
                 throw new IllegalArgumentException();
             }
         }
