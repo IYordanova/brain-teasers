@@ -5,7 +5,7 @@ import edu.princeton.cs.algs4.StdRandom;
 
 import java.util.Arrays;
 
-public class Sorting {
+public class ClassicSortingAlgorithms {
 
     /* Selection Sort:
        - in each iteration find the min remaining and swap with the i-th

@@ -3,6 +3,7 @@ package tevalcourse.theory.algorithms.sorting;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class FastCollinearPoints {
 
@@ -38,33 +39,40 @@ public class FastCollinearPoints {
     private void findLineSegments(Point[] points) {
         int length = points.length;
         if (length < POINTS_IN_LINE) {
-           return;
+            return;
         }
-        List<Point> added = new ArrayList<>();
-        for (Point p : points) {
+
+        List<Map.Entry<Point, Point>> added = new ArrayList<>();
+        for (int i = 0; i < points.length - 3; i ++) {
+            Point p =  points[i];
             Point[] copy = Arrays.copyOf(points, points.length);
             Arrays.sort(copy, p.slopeOrder());
 
-            Point q = copy[length - 3];
-            Point r = copy[length - 2];
-            Point s = copy[length - 1];
-
-            double pqSlope = p.slopeTo(q);
-            double prSlope = p.slopeTo(r);
-            double psSlope = p.slopeTo(s);
-
-            if (pqSlope == prSlope && pqSlope == psSlope && prSlope == psSlope) {
-                Point[] quadruple = {p, q, r, s};
-                Arrays.sort(quadruple);
-                Point start = quadruple[0];
-                Point end = quadruple[3];
-                if (!added.containsAll(List.of(start, end))) {
-                    lineSegments.add(new LineSegment(start, end));
-                    added.add(start);
-                    added.add(end);
+            for (int j = 0; j <= length - 3; j++) {
+                if (checkSlope(added, p, copy[j], copy[j + 1], copy[j + 2])) {
+                    break;
                 }
             }
         }
+    }
+
+    private boolean checkSlope(List<Map.Entry<Point, Point>> added, Point p, Point q, Point r, Point s) {
+        double pqSlope = p.slopeTo(q);
+        double prSlope = p.slopeTo(r);
+        double psSlope = p.slopeTo(s);
+
+        if (pqSlope == prSlope && pqSlope == psSlope && prSlope == psSlope) {
+            Point[] quadruple = {p, q, r, s};
+            Arrays.sort(quadruple);
+            Point start = quadruple[0];
+            Point end = quadruple[3];
+            if (!added.contains(Map.entry(start, end)) && !added.contains(Map.entry(end, start))) {
+                lineSegments.add( new LineSegment(start, end));
+                added.add(Map.entry(start, end));
+                return true;
+            }
+        }
+        return false;
     }
 
     public int numberOfSegments() {

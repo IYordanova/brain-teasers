@@ -3,6 +3,7 @@ package tevalcourse.theory.algorithms.sorting;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class BruteCollinearPoints {
 
@@ -37,10 +38,12 @@ public class BruteCollinearPoints {
 
     private void findLineSegments(Point[] points) {
         int length = points.length;
-        combinationUtil(points, new Point[POINTS_IN_LINE], 0, length - 1, 0);
+        combinationUtil(points, new Point[POINTS_IN_LINE], new ArrayList<>(), 0, length - 1, 0);
     }
 
-    private void combinationUtil(Point[] allPoints, Point[] quadruple, int start, int end, int index) {
+    private void combinationUtil(Point[] allPoints, Point[] quadruple,
+                                 List<Map.Entry<Point, Point>> added,
+                                 int start, int end, int index) {
         if (index == POINTS_IN_LINE) {
             double pqSlope = quadruple[0].slopeTo(quadruple[1]);
             double prSlope = quadruple[0].slopeTo(quadruple[2]);
@@ -48,15 +51,20 @@ public class BruteCollinearPoints {
 
             if (pqSlope == prSlope && pqSlope == psSlope && prSlope == psSlope) {
                 Arrays.sort(quadruple);
-                LineSegment lineSegment = new LineSegment(quadruple[0], quadruple[3]);
-                lineSegments.add(lineSegment);
+                Point from = quadruple[0];
+                Point to = quadruple[3];
+                if (!added.contains(Map.entry(from, to)) && !added.contains(Map.entry(to, from))) {
+                    LineSegment lineSegment = new LineSegment(from, to);
+                    lineSegments.add(lineSegment);
+                    added.add(Map.entry(from, to));
+                }
             }
             return;
         }
 
         for (int i = start; i <= end && end - i + 1 >= POINTS_IN_LINE - index; i++) {
             quadruple[index] = allPoints[i];
-            combinationUtil(allPoints, quadruple, i + 1, end, index + 1);
+            combinationUtil(allPoints, quadruple, added, i + 1, end, index + 1);
         }
     }
 
