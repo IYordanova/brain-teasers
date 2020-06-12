@@ -6,6 +6,7 @@ import java.util.List;
 
 public class FastCollinearPoints {
 
+    private static final int POINTS_IN_LINE = 4;
     private final List<LineSegment> lineSegments = new ArrayList<>();
 
 
@@ -36,6 +37,9 @@ public class FastCollinearPoints {
 
     private void findLineSegments(Point[] points) {
         int length = points.length;
+        if (length < POINTS_IN_LINE) {
+           return;
+        }
         List<Point> added = new ArrayList<>();
         for (Point p : points) {
             Point[] copy = Arrays.copyOf(points, points.length);
