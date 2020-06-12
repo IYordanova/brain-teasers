@@ -123,16 +123,23 @@ public class Point implements Comparable<Point> {
     public static void main(String[] args) {
         In in = new In(args[0]);
         int n = in.readInt();
+        in.readLine();
         Point[] points = new Point[n];
         for (int i = 0; i < n; i++) {
-            int x = in.readInt();
-            int y = in.readInt();
-            points[i] = new Point(x, y);
+            String line = in.readLine();
+            if (line.trim().equals("null")) {
+                points[i] = null;
+            } else {
+                String[] ints = line.split("\\s+");
+                int x = Integer.parseInt(ints[0]);
+                int y = Integer.parseInt(ints[1]);
+                points[i] = new Point(x, y);
+            }
         }
 
         // print and draw the line segments
         long start = System.nanoTime();
-        BruteCollinearPoints bruteCollinear = new BruteCollinearPoints(points);
+        BruteCollinearPoints bruteCollinear = new BruteCollinearPoints(new Point[]{null});
         for (LineSegment segment : bruteCollinear.segments()) {
             StdOut.println(segment);
         }
