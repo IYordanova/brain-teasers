@@ -1,7 +1,15 @@
 package tevalcourse.second_largest;
 
 public class SecondLargest {
-    static int getSecondLargest(int[] numbers) {
+
+    /**
+     * Finds and returns the second largest number in an integer array.
+     * @param numbers - the array to lookup the number in
+     * @return - the second largest number in the array.
+     * If the input is null, the size of the input array is less than two or it contains only duplicate elements,
+     * then -1 is returned.
+     */
+    public static int getSecondLargest(int[] numbers) {
         if (numbers == null || numbers.length < 2) {
             return -1;
         }

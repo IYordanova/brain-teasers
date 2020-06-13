@@ -2,21 +2,28 @@ package tevalcourse.array_order_check;
 
 import tevalcourse.BaseTest;
 
-import java.io.IOException;
 import java.util.function.BiPredicate;
 
 public class ArrayOrder extends BaseTest {
 
-    public static int checkArrayOrder(int[] arr) {
-        if (arr == null || arr.length < 2) {
+    /**
+     * Method checking whether an array passed as argument is sorted
+     * @param intArray - an array of integers
+     * @return an int indicating whether the array is sorted and in what direction, possible values are:
+     *   1 -> input array is sorted in ascending order
+     *  -1 -> input array is sorted in descending order
+     *   0 -> input array is *not* sorted or the input is null or it's an array with less than 2 items
+     */
+    public static int checkArrayOrder(int[] intArray) {
+        if (intArray == null || intArray.length < 2) {
             return 0;
         }
-        if (arr[0] > arr[1]) {
-            if (isSortedDesc(arr)) {
+        if (intArray[0] > intArray[1]) {
+            if (isSortedDesc(intArray)) {
                 return -1;
             }
         } else {
-            if (isSortedAsc(arr)) {
+            if (isSortedAsc(intArray)) {
                 return 1;
             }
         }
@@ -31,55 +38,14 @@ public class ArrayOrder extends BaseTest {
         return isSorted(array, (a, b) -> a < b);
     }
 
-    private static boolean isSorted(int[] array, BiPredicate<Integer, Integer> inOrder) {
-        int length = array.length;
+    private static boolean isSorted(int[] intArray, BiPredicate<Integer, Integer> inOrder) {
+        int length = intArray.length;
         for (int i = 0; i < length - 1; i++) {
-            if (inOrder.test(array[i], array[i + 1])) {
+            if (inOrder.test(intArray[i], intArray[i + 1])) {
                 return false;
             }
         }
         return true;
     }
 
-
-    public static void main(String[] args) throws IOException {
-        int[] numbers = readFile("secondLargest")
-                .stream()
-                .mapToInt(Integer::parseInt).toArray();
-
-        long start1 = System.nanoTime();
-        System.out.println(String.format("Is sorted %d, done in %d", checkArrayOrder(numbers), (System.nanoTime() - start1) / 1000000));
-
-        System.out.println(String.format("Is sorted %d", checkArrayOrder(null)));
-
-        numbers = new int[]{1};
-        System.out.println(String.format("Is sorted %d", checkArrayOrder(numbers)));
-
-        numbers = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        System.out.println(String.format("Is sorted %d", checkArrayOrder(numbers)));
-
-        numbers = new int[]{10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
-        System.out.println(String.format("Is sorted %d", checkArrayOrder(numbers)));
-
-        numbers = new int[]{-10, -9, -8, -7, -6, -5, -4, -3, -2, -1};
-        System.out.println(String.format("Is sorted %d", checkArrayOrder(numbers)));
-
-        numbers = new int[]{-1, -2, -3, -4, -5, -6, -7, -8, -9, -10};
-        System.out.println(String.format("Is sorted %d", checkArrayOrder(numbers)));
-
-        numbers = new int[]{1, 2};
-        System.out.println(String.format("Is sorted %d", checkArrayOrder(numbers)));
-
-        numbers = new int[]{2, 1};
-        System.out.println(String.format("Is sorted %d", checkArrayOrder(numbers)));
-
-        numbers = new int[]{1, 1, 1, 1};
-        System.out.println(String.format("Is sorted %d", checkArrayOrder(numbers)));
-
-        numbers = new int[]{-1, -1, -1};
-        System.out.println(String.format("Is sorted %d", checkArrayOrder(numbers)));
-
-        numbers = new int[]{4, 11, 6, 2, 12};
-        System.out.println(String.format("Is sorted %d", checkArrayOrder(numbers)));
-    }
 }
