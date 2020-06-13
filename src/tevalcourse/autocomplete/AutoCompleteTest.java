@@ -1,6 +1,6 @@
 package tevalcourse.autocomplete;
 
-import tevalcourse.BaseTestHelper;
+import tevalcourse.BaseTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class AutoCompleteTest extends BaseTestHelper {
+public class AutoCompleteTest extends BaseTest {
 
     public static void main(String[] args) throws IOException {
         List<String> words = new ArrayList<>();

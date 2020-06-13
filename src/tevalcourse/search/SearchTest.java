@@ -1,12 +1,12 @@
 package tevalcourse.search;
 
-import tevalcourse.BaseTestHelper;
+import tevalcourse.BaseTest;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class SearchTest extends BaseTestHelper {
+public class SearchTest extends BaseTest {
 
     public static void main(String[] args) throws IOException {
         List<String> index;

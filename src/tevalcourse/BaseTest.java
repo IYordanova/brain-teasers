@@ -1,15 +1,22 @@
 package tevalcourse;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
 import java.util.List;
+import java.io.OutputStreamWriter;
 import java.util.stream.Collectors;
 
-public class BaseTestHelper {
+public class BaseTest {
     protected static final String SEPARATOR = "----------------------------------";
 
     protected final static String ROOT_FILE_DIR = System.getProperty("user.dir")
             + System.getProperty("file.separator")
-            + "resources";
+            + "test-files";
 
     protected static List<String> readFile(String fileName) throws IOException {
         try (InputStreamReader inputStreamReader =

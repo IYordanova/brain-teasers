@@ -1,11 +1,11 @@
 package tevalcourse.array_order_check;
 
-import tevalcourse.BaseTestHelper;
+import tevalcourse.BaseTest;
 
 import java.io.IOException;
 import java.util.function.BiPredicate;
 
-public class ArrayOrder extends BaseTestHelper {
+public class ArrayOrder extends BaseTest {
 
     public static int checkArrayOrder(int[] arr) {
         if (arr == null || arr.length < 2) {
@@ -43,7 +43,7 @@ public class ArrayOrder extends BaseTestHelper {
 
 
     public static void main(String[] args) throws IOException {
-        int[] numbers = readFile("secondLargest_1")
+        int[] numbers = readFile("secondLargest")
                 .stream()
                 .mapToInt(Integer::parseInt).toArray();
 

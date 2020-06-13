@@ -1,6 +1,6 @@
 package tevalcourse.flights;
 
-import tevalcourse.BaseTestHelper;
+import tevalcourse.BaseTest;
 import tevalcourse.flights.graph.Flight;
 import tevalcourse.flights.graph.FlightFinder;
 import tevalcourse.flights.graph.Route;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FlightFinderTest extends BaseTestHelper {
+public class FlightFinderTest extends BaseTest {
 
     static class TestCase {
         final int limit;
