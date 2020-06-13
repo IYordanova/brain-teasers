@@ -1,4 +1,4 @@
-package tevalcourse.theory.algorithms.sorting;
+package tevalcourse.theory.algorithms.sorting.hw;
 
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
