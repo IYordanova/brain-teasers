@@ -1,4 +1,4 @@
-package tevalcourse.theory.algorithms.datastructures.hw;
+package tevalcourse.theory.datastructures.hw;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;

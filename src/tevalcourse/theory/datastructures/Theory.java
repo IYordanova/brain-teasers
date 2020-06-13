@@ -1,6 +1,5 @@
-package tevalcourse.theory.algorithms.datastructures;
+package tevalcourse.theory.datastructures;
 
-import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
 public class Theory {

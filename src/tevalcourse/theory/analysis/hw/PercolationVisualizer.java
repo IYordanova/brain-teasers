@@ -1,4 +1,4 @@
-package tevalcourse.theory.algorithms.analysis;
+package tevalcourse.theory.analysis.hw;
 
 /******************************************************************************
  *  Compilation:  javac PercolationVisualizer.java

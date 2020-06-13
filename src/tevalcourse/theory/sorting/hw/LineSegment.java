@@ -1,4 +1,4 @@
-package tevalcourse.theory.algorithms.sorting.hw;
+package tevalcourse.theory.sorting.hw;
 
 
 public class LineSegment {

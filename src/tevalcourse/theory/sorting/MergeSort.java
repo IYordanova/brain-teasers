@@ -1,4 +1,4 @@
-package tevalcourse.theory.algorithms.sorting;
+package tevalcourse.theory.sorting;
 
 public class MergeSort {
 

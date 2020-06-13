@@ -1,4 +1,4 @@
-package tevalcourse.theory.algorithms.datastructures;
+package tevalcourse.theory.datastructures;
 
 
 import java.util.Iterator;

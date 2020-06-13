@@ -1,4 +1,4 @@
-package tevalcourse.theory.algorithms.datastructures;
+package tevalcourse.theory.datastructures;
 
 public class QueueAsArray<T> {
     private T[] array;

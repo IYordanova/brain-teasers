@@ -1,4 +1,4 @@
-package tevalcourse.theory.algorithms.analysis;
+package tevalcourse.theory.analysis;
 
 public class AlgorithmAnalysis {
     /*  Complexity:

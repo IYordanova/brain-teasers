@@ -1,4 +1,4 @@
-package tevalcourse.theory.algorithms.sorting;
+package tevalcourse.theory.sorting;
 
 import edu.princeton.cs.algs4.StdRandom;
 
