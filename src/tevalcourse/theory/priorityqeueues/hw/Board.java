@@ -7,12 +7,12 @@ import java.util.List;
 public class Board {
     private final int dimension;
     private final int[][] tiles;
-    private final int[] twinCoordinates;
+    private int x, y, x2, y2;
 
     public Board(int[][] tiles) {
         this.dimension = tiles.length;
         this.tiles = copy(tiles);
-        this.twinCoordinates = getTwinCoordinates();
+        createTwinCoordinates();
     }
 
     private int[][] copy(int[][] from) {
@@ -25,20 +25,15 @@ public class Board {
         return copy;
     }
 
-    private int[] getTwinCoordinates() {
-        int i = StdRandom.uniform(dimension);
-        int j = StdRandom.uniform(dimension);
-        while (tiles[i][j] == 0) {
-            i = StdRandom.uniform(dimension);
-            j = StdRandom.uniform(dimension);
+    private void createTwinCoordinates() {
+        while (tiles[x][y] == 0) {
+            x = StdRandom.uniform(dimension);
+            y = StdRandom.uniform(dimension);
         }
-        int i2 = StdRandom.uniform(dimension);
-        int j2 = StdRandom.uniform(dimension);
-        while (tiles[i2][j2] == 0) {
-            i2 = StdRandom.uniform(dimension);
-            j2 = StdRandom.uniform(dimension);
+        while (tiles[x2][y2] == 0 || (x2 == x && y2 == y)) {
+            x2 = StdRandom.uniform(dimension);
+            y2 = StdRandom.uniform(dimension);
         }
-        return new int[]{i, j, i2, j2};
     }
 
     public int dimension() {
@@ -193,7 +188,7 @@ public class Board {
 
     public Board twin() {
         int[][] copy = copy(tiles);
-        swap(copy, twinCoordinates[0], twinCoordinates[1], twinCoordinates[2], twinCoordinates[3]);
+        swap(copy, x, y, x2, y2);
         return new Board(copy);
     }
 
@@ -240,6 +235,30 @@ public class Board {
     }
 
     public static void main(String[] args) {
+        int[][] tiles = new int[][]{
+                {1, 6, 4},
+                {0, 7, 8},
+                {2, 3, 5}
+        };
+        Board board = new Board(tiles);
+        for (Board b : board.neighbors()) {
+            System.out.println(b);
+        }
+        for (Board b : board.neighbors()) {
+            System.out.println(b);
+        }
+        assert board.hamming() == 7;
+        assert board.equals(new Board(tiles));
+        assert board.hamming() == 7;
+        for (Board b : board.neighbors()) {
+            System.out.println(b);
+        }
+        System.out.println(board.toString());
+        System.out.println(board.twin());
+        for (Board b : board.neighbors()) {
+            System.out.println(b);
+        }
+
         test2NeighbourInitialBoard();
         test3NeighbourInitialBoard();
         test4NeighbourInitialBoard();
