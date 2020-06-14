@@ -1,18 +1,55 @@
 package tevalcourse.theory.priorityqeueues.hw;
 
-import edu.princeton.cs.algs4.StdRandom;
-
 import java.util.List;
 
 public class Board {
-    private final int dimension;
     private final int[][] tiles;
-    private int x, y, x2, y2;
+    private final int dimension;
+    private int hamming;
+    private int manhattan;
+    private boolean isGoal = true;
+    private int blankI, blankJ;
+
 
     public Board(int[][] tiles) {
         this.dimension = tiles.length;
         this.tiles = copy(tiles);
-        createTwinCoordinates();
+        calcProperties();
+    }
+
+    private void calcProperties() {
+        int tilesNotInPlace = 0;
+        int sumManhattan = 0;
+        for (int i = 0; i < dimension; i++) {
+            for (int j = 0; j < dimension; j++) {
+                int number = tiles[i][j];
+                if (i == dimension - 1 && j == dimension - 1) {
+                    if (number != 0) {
+                        isGoal = false;
+                    }
+                } else if (i * dimension + j + 1 != number) {
+                    isGoal = false;
+                }
+
+                if (number == 0) {
+                    blankI = i;
+                    blankJ = j;
+                    continue;
+                }
+
+                if (number != i * dimension + j + 1) {
+                    tilesNotInPlace++;
+                }
+
+                int remainder = number % dimension;
+                int targetI = remainder == 0 ? number / dimension - 1 : number / dimension;
+                int targetJ = remainder == 0 ? dimension - 1 : remainder - 1;
+                int diff = Math.abs(targetI - i) + Math.abs(targetJ - j);
+                sumManhattan += diff;
+            }
+        }
+        this.hamming = tilesNotInPlace;
+        this.manhattan = sumManhattan;
     }
 
     private int[][] copy(int[][] from) {
@@ -25,68 +62,30 @@ public class Board {
         return copy;
     }
 
-    private void createTwinCoordinates() {
-        while (tiles[x][y] == 0) {
-            x = StdRandom.uniform(dimension);
-            y = StdRandom.uniform(dimension);
-        }
-        while (tiles[x2][y2] == 0 || (x2 == x && y2 == y)) {
-            x2 = StdRandom.uniform(dimension);
-            y2 = StdRandom.uniform(dimension);
-        }
-    }
-
     public int dimension() {
         return dimension;
     }
 
     public int hamming() {
-        int tilesNotInPlace = 0;
-        for (int i = 0; i < dimension; i++) {
-            for (int j = 0; j < dimension; j++) {
-                int number = tiles[i][j];
-                if (number == 0) {
-                    continue;
-                }
-                if (number != i * dimension + j + 1) {
-                    tilesNotInPlace++;
-                }
-            }
-        }
-        return tilesNotInPlace;
+        return hamming;
     }
 
     public int manhattan() {
-        int sumManhattan = 0;
-        for (int i = 0; i < dimension; i++) {
-            for (int j = 0; j < dimension; j++) {
-                int number = tiles[i][j];
-                if (number == 0) {
-                    continue;
-                }
-                int remainder = number % dimension;
-                int targetI = remainder == 0 ? number / dimension - 1 : number / dimension;
-                int targetJ = remainder == 0 ? dimension - 1 : remainder - 1;
-                int diff = Math.abs(targetI - i) + Math.abs(targetJ - j);
-                sumManhattan += diff;
-            }
-        }
-        return sumManhattan;
+        return manhattan;
     }
 
     public boolean isGoal() {
-        for (int i = 0; i < dimension; i++) {
-            for (int j = 0; j < dimension; j++) {
-                if (i == dimension - 1 && j == dimension - 1) {
-                    if (tiles[i][j] != 0) {
-                        return false;
-                    }
-                } else if (i * dimension + j + 1 != tiles[i][j]) {
-                    return false;
-                }
-            }
+        return isGoal;
+    }
+
+    public Board twin() {
+        int[][] copy = copy(tiles);
+        if (blankI + 1 < dimension) {
+            swapRight(copy, blankI + 1, 0);
+        } else if (blankI - 1 >= 0) {
+            swapRight(copy, blankI - 1, 0);
         }
-        return true;
+        return new Board(copy);
     }
 
     public Iterable<Board> neighbors() {
@@ -95,15 +94,8 @@ public class Board {
         int[][] n3 = new int[dimension][dimension];
         int[][] n4 = new int[dimension][dimension];
 
-        int blankI = -1;
-        int blankJ = -1;
-
         for (int i = 0; i < dimension; i++) {
             for (int j = 0; j < dimension; j++) {
-                if (tiles[i][j] == 0) {
-                    blankI = i;
-                    blankJ = j;
-                }
                 n1[i][j] = tiles[i][j];
                 n2[i][j] = tiles[i][j];
                 n3[i][j] = tiles[i][j];
@@ -186,11 +178,6 @@ public class Board {
         swap(a, i, j, i + 1, j);
     }
 
-    public Board twin() {
-        int[][] copy = copy(tiles);
-        swap(copy, x, y, x2, y2);
-        return new Board(copy);
-    }
 
     @Override
     public boolean equals(Object obj) {
@@ -235,29 +222,17 @@ public class Board {
     }
 
     public static void main(String[] args) {
-        int[][] tiles = new int[][]{
+        int[][] tiles = {
                 {1, 6, 4},
                 {0, 7, 8},
                 {2, 3, 5}
         };
+
         Board board = new Board(tiles);
-        for (Board b : board.neighbors()) {
-            System.out.println(b);
-        }
-        for (Board b : board.neighbors()) {
-            System.out.println(b);
-        }
+        assert board.twin().equals(board.twin());
         assert board.hamming() == 7;
         assert board.equals(new Board(tiles));
         assert board.hamming() == 7;
-        for (Board b : board.neighbors()) {
-            System.out.println(b);
-        }
-        System.out.println(board.toString());
-        System.out.println(board.twin());
-        for (Board b : board.neighbors()) {
-            System.out.println(b);
-        }
 
         test2NeighbourInitialBoard();
         test3NeighbourInitialBoard();
@@ -269,6 +244,15 @@ public class Board {
                 {7, 8, 0}
         };
         assert new Board(board3x3Goal).isGoal();
+
+        int[][] board5x5Goal = {
+                {1, 2, 3, 4, 5},
+                {6, 7, 8, 9, 10},
+                {11, 12, 13, 14, 15},
+                {16, 17, 18, 19, 20},
+                {21, 22, 23, 24, 0}
+        };
+        assert new Board(board5x5Goal).isGoal();
     }
 
     private static void test2NeighbourInitialBoard() {

@@ -17,13 +17,11 @@ public class Solver {
         private final Board board;
         private final int numOfMovesSoFar;
         private final SearchNode prev;
-        final int manhattan;
 
         public SearchNode(Board board, int numOfMovesSoFar, SearchNode prev) {
             this.board = board;
             this.numOfMovesSoFar = numOfMovesSoFar;
             this.prev = prev;
-            this.manhattan = board.manhattan();
         }
     }
 
@@ -32,32 +30,39 @@ public class Solver {
         if (initial == null) {
             throw new IllegalArgumentException();
         }
-        int dimension = initial.dimension();
-        int maxRounds = perm(dimension * dimension - 1, 1);
-        MinPQ<SearchNode> searchNodesQ = new MinPQ<>(Comparator.comparingInt(o -> o.manhattan));
-        searchNodesQ.insert(new SearchNode(initial, 0, null));
-        int moves = 0;
-        while (!searchNodesQ.isEmpty() && moves < maxRounds) {
-            SearchNode minNode = searchNodesQ.delMin();
-            if (minNode.board.isGoal()) {
-                solution = minNode;
+        Board twin = initial.twin();
+
+        MinPQ<SearchNode> initialPq = new MinPQ<>(Comparator.comparingInt(o -> o.board.manhattan() + o.numOfMovesSoFar));
+        initialPq.insert(new SearchNode(initial, 0, null));
+
+        MinPQ<SearchNode> twinPq = new MinPQ<>(Comparator.comparingInt(o -> o.board.manhattan() + o.numOfMovesSoFar));
+        twinPq.insert(new SearchNode(twin, 0, null));
+
+        while (!initialPq.isEmpty() && !twinPq.isEmpty()) {
+            SearchNode initialMinNode = initialPq.delMin();
+            if (initialMinNode.board.isGoal()) {
+                solution = initialMinNode;
                 break;
             }
-            moves++;
-            for (Board neighbourBoard : minNode.board.neighbors()) {
-                if (minNode.prev != null && minNode.prev.board.equals(neighbourBoard)) {
+            for (Board neighbourBoard : initialMinNode.board.neighbors()) {
+                if (initialMinNode.prev != null && initialMinNode.prev.board.equals(neighbourBoard)) {
                     continue;
                 }
-                searchNodesQ.insert(new SearchNode(neighbourBoard, moves, minNode));
+                initialPq.insert(new SearchNode(neighbourBoard, initialMinNode.numOfMovesSoFar + 1, initialMinNode));
+            }
+
+            SearchNode twinMinNode = twinPq.delMin();
+            if (twinMinNode.board.isGoal()) {
+                solution = null; // unsolvable
+                break;
+            }
+            for (Board neighbourBoard : twinMinNode.board.neighbors()) {
+                if (twinMinNode.prev != null && twinMinNode.prev.board.equals(neighbourBoard)) {
+                    continue;
+                }
+                twinPq.insert(new SearchNode(neighbourBoard, initialMinNode.numOfMovesSoFar + 1, twinMinNode));
             }
         }
-    }
-
-    private int perm(int n, int acc) {
-        if (n <= 1) {
-            return acc;
-        }
-        return perm(n - 1, acc * n);
     }
 
     public boolean isSolvable() {
