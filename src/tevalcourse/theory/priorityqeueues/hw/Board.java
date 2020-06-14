@@ -2,16 +2,43 @@ package tevalcourse.theory.priorityqeueues.hw;
 
 import edu.princeton.cs.algs4.StdRandom;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class Board {
     private final int dimension;
     private final int[][] tiles;
+    private final int[] twinCoordinates;
 
     public Board(int[][] tiles) {
         this.dimension = tiles.length;
-        this.tiles = Arrays.copyOf(tiles, dimension);
+        this.tiles = copy(tiles);
+        this.twinCoordinates = getTwinCoordinates();
+    }
+
+    private int[][] copy(int[][] from) {
+        int[][] copy = new int[from.length][from.length];
+        for (int i = 0; i < dimension; i++) {
+            for (int j = 0; j < dimension; j++) {
+                copy[i][j] = from[i][j];
+            }
+        }
+        return copy;
+    }
+
+    private int[] getTwinCoordinates() {
+        int i = StdRandom.uniform(dimension);
+        int j = StdRandom.uniform(dimension);
+        while (tiles[i][j] == 0) {
+            i = StdRandom.uniform(dimension);
+            j = StdRandom.uniform(dimension);
+        }
+        int i2 = StdRandom.uniform(dimension);
+        int j2 = StdRandom.uniform(dimension);
+        while (tiles[i2][j2] == 0) {
+            i2 = StdRandom.uniform(dimension);
+            j2 = StdRandom.uniform(dimension);
+        }
+        return new int[]{i, j, i2, j2};
     }
 
     public int dimension() {
@@ -165,20 +192,8 @@ public class Board {
     }
 
     public Board twin() {
-        int[][] copy = Arrays.copyOf(tiles, dimension);
-        int i = StdRandom.uniform(dimension);
-        int j = StdRandom.uniform(dimension);
-        while (copy[i][j] == 0) {
-            i = StdRandom.uniform(dimension);
-            j = StdRandom.uniform(dimension);
-        }
-        int i2 = StdRandom.uniform(dimension);
-        int j2 = StdRandom.uniform(dimension);
-        while (copy[i2][j2] == 0) {
-            i2 = StdRandom.uniform(dimension);
-            j2 = StdRandom.uniform(dimension);
-        }
-        swap(copy, i, j, i2, j2);
+        int[][] copy = copy(tiles);
+        swap(copy, twinCoordinates[0], twinCoordinates[1], twinCoordinates[2], twinCoordinates[3]);
         return new Board(copy);
     }
 
@@ -238,7 +253,7 @@ public class Board {
     }
 
     private static void test2NeighbourInitialBoard() {
-        int[][] board3x3 = new int[][]{
+        int[][] board3x3 = {
                 {0, 1, 3},
                 {4, 2, 5},
                 {7, 8, 6}
@@ -271,6 +286,7 @@ public class Board {
             neighboursCount++;
         }
         assert neighboursCount == 2;
+        System.out.println(board + " has twin:");
         System.out.println(board.twin());
     }
 
@@ -317,6 +333,7 @@ public class Board {
             neighboursCount++;
         }
         assert neighboursCount == 3;
+        System.out.println(board + " has twin:");
         System.out.println(board.twin());
     }
 
@@ -371,6 +388,7 @@ public class Board {
             neighboursCount++;
         }
         assert neighboursCount == 4;
+        System.out.println(board + " has twin:");
         System.out.println(board.twin());
     }
 }

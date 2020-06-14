@@ -4,6 +4,7 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.LinkedList;
@@ -80,6 +81,8 @@ public class Solver {
             boards.add(node.board);
             node = node.prev;
         }
+        boards.add(node.board);
+        Collections.reverse(boards);
         return boards;
     }
 
