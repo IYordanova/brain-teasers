@@ -184,7 +184,7 @@ public class KdTree {
         }
 
         if (nearest == null || dqn > drq) {
-            if (nearest == null || dqn > query.distanceSquaredTo(node.point) && !node.point.equals(query)) {
+            if (nearest == null || dqn > query.distanceSquaredTo(node.point)) {
                 nearest = node.point;
             }
             if (node.red) {

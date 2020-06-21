@@ -1,5 +1,6 @@
 package tevalcourse.theory.symboltable.hw;
 
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.SET;
@@ -64,9 +65,6 @@ public class PointSET {
         Point2D nearest = null;
         double minDistance = Double.MAX_VALUE;
         for (Point2D point : pointsSet) {
-            if (point.equals(p)) {
-                continue;
-            }
             double distance = p.distanceSquaredTo(point);
             if (distance < minDistance) {
                 minDistance = distance;
@@ -77,29 +75,17 @@ public class PointSET {
     }
 
     public static void main(String[] args) {
+        String filename = args[0];
+        In in = new In(filename);
         PointSET points = new PointSET();
+        while (!in.isEmpty()) {
+            double x = in.readDouble();
+            double y = in.readDouble();
+            Point2D p = new Point2D(x, y);
+            points.insert(p);
+        }
 
-        assert points.isEmpty();
-
-        points.insert(new Point2D(0.0, 0.0));
-        points.insert(new Point2D(0.1, 0.4));
-        points.insert(new Point2D(0.4, 0.3));
-        points.insert(new Point2D(0.6, 0.5));
-        points.insert(new Point2D(0.8, 0.6));
-
-        assert !points.isEmpty();
-
-        assert points.contains(new Point2D(0.1, 0.4));
-        assert points.contains(new Point2D(0.0, 0.0));
-        assert !points.contains(new Point2D(1, 2));
-
-        Point2D nearest = points.nearest(new Point2D(0.4, 0.3));
-        assert nearest.equals(new Point2D(0.6, 0.5));
-
-        Iterable<Point2D> range = points.range(new RectHV(0.4, 0.3, 0.8, 0.6));
-        range.forEach(System.out::println);
-
-        points.draw();
+        System.out.println(points.nearest(new Point2D(0.75, 0.625)));
     }
 
 }
