@@ -49,6 +49,9 @@ public class PointSET {
     }
 
     public Iterable<Point2D> range(RectHV rect) {
+        if (rect == null) {
+            throw new IllegalArgumentException();
+        }
         SET<Point2D> range = new SET<>();
         for (Point2D point : pointsSet) {
             if (rect.contains(point)) {
@@ -59,6 +62,9 @@ public class PointSET {
     }
 
     public Point2D nearest(Point2D p) {
+        if (p == null) {
+            throw new IllegalArgumentException();
+        }
         if (isEmpty()) {
             return null;
         }

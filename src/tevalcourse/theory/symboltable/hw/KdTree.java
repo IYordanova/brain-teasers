@@ -1,5 +1,6 @@
 package tevalcourse.theory.symboltable.hw;
 
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.StdDraw;
@@ -9,15 +10,13 @@ import java.util.List;
 
 public class KdTree {
 
-    private static final double MIN_VALUE = 0.0;
-    private static final double MAX_VALUE = 1.0;
-    private static final RectHV WRAPPER_RECT = new RectHV(MIN_VALUE, MIN_VALUE, MAX_VALUE, MAX_VALUE);
+    private static final RectHV WRAPPER_RECT = new RectHV(0, 0, 1, 1);
 
     private static class Node {
-        private Point2D point;
+        private final Point2D point;
+        private final boolean red;
         private Node left;
         private Node right;
-        private final boolean red;
 
         public Node(Point2D point, boolean red) {
             this.point = point;
@@ -46,20 +45,22 @@ public class KdTree {
             throw new IllegalArgumentException();
         }
         root = insert(root, p, true);
-        size++;
     }
 
     private Node insert(Node node, Point2D point, boolean red) {
         if (node == null) {
+            size++;
             return new Node(point, red);
         }
-        double cmp = getKey(point, red) - node.getKey();
-        if (cmp < 0) {
-            node.left = insert(node.left, point, !red);
-        } else if (cmp > 0) {
-            node.right = insert(node.right, point, !red);
+
+        if (node.point.x() == point.x() && node.point.y() == point.y()) {
+            return node;
+        }
+
+        if (node.red && point.x() < node.point.x() || !node.red && point.y() < node.point.y()) {
+            node.left = insert(node.left, point, !node.red);
         } else {
-            node.point = point;
+            node.right = insert(node.right, point, !node.red);
         }
         return node;
     }
@@ -72,22 +73,22 @@ public class KdTree {
         if (p == null) {
             throw new IllegalArgumentException();
         }
-        return find(p) != null;
+        return contains(root, p);
     }
 
-    private Node find(Point2D point) {
-        Node node = root;
-        while (node != null) {
-            double cmp = getKey(point, node.red) - node.getKey();
-            if (cmp < 0) {
-                node = node.left;
-            } else if (cmp > 0) {
-                node = node.right;
-            } else {
-                return node;
-            }
+    private boolean contains(Node node, Point2D point) {
+        if (node == null) {
+            return false;
         }
-        return null;
+        if (node.point.x() == point.x() && node.point.y() == point.y()) {
+            return true;
+        }
+
+        if (node.red && point.x() < node.point.x() || !node.red && point.y() < node.point.y()) {
+            return contains(node.left, point);
+        } else {
+            return contains(node.right, point);
+        }
     }
 
     public void draw() {
@@ -133,11 +134,14 @@ public class KdTree {
     }
 
     private void range(Node node, RectHV rect, RectHV searchRect, List<Point2D> range) {
-        if (node == null) return;
+        if (node == null) {
+            return;
+        }
 
         if (searchRect.intersects(rect)) {
-            final Point2D p = new Point2D(node.point.x(), node.point.y());
-            if (searchRect.contains(p)) range.add(p);
+            if (searchRect.contains(node.point)) {
+                range.add(node.point);
+            }
             range(node.left, leftRect(rect, node), searchRect, range);
             range(node.right, rightRect(rect, node), searchRect, range);
         }
@@ -217,37 +221,17 @@ public class KdTree {
 
 
     public static void main(String[] args) {
+        String filename = args[0];
+        In in = new In(filename);
         KdTree points = new KdTree();
+        while (!in.isEmpty()) {
+            double x = in.readDouble();
+            double y = in.readDouble();
+            Point2D p = new Point2D(x, y);
+            points.insert(p);
+        }
 
-        assert points.isEmpty();
-
-        Point2D p = new Point2D(0.4, 0.3);
-        Point2D p1 = new Point2D(0.0, 0.0);
-        Point2D p2 = new Point2D(0.1, 0.4);
-        points.insert(p1);
-        points.insert(p2);
-        points.insert(p);
-        points.insert(new Point2D(0.6, 0.5));
-        points.insert(new Point2D(0.8, 0.6));
-
-        assert !points.isEmpty();
-
-        assert points.contains(new Point2D(0.1, 0.4));
-        assert points.contains(new Point2D(0.0, 0.0));
-        assert !points.contains(new Point2D(1, 2));
-
-        Point2D nearest = points.nearest(p);
-        System.out.println(String.format("Nearest to %s is %s ", p, nearest));
-
-        nearest = points.nearest(p1);
-        System.out.println(String.format("Nearest to %s is %s ", p1, nearest));
-
-        nearest = points.nearest(p2);
-        System.out.println(String.format("Nearest to %s is %s ", p2, nearest));
-
-        Iterable<Point2D> range = points.range(new RectHV(0.4, 0.3, 0.8, 0.6));
-        range.forEach(System.out::println);
-
-        points.draw();
+        points.range(new RectHV(0.0, 0.5, 0.0, 0.75))
+            .forEach(System.out::println);
     }
 }
