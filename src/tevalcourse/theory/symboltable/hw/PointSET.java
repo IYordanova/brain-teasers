@@ -10,7 +10,6 @@ public class PointSET {
 
     private final SET<Point2D> pointsSet;
 
-
     public PointSET() {
         pointsSet = new SET<>();
     }
@@ -68,7 +67,7 @@ public class PointSET {
             if (point.equals(p)) {
                 continue;
             }
-            double distance = p.distanceTo(point);
+            double distance = p.distanceSquaredTo(point);
             if (distance < minDistance) {
                 minDistance = distance;
                 nearest = point;

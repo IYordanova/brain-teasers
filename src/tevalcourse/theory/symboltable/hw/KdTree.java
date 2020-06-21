@@ -2,27 +2,29 @@ package tevalcourse.theory.symboltable.hw;
 
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
-import edu.princeton.cs.algs4.SET;
 import edu.princeton.cs.algs4.StdDraw;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class KdTree {
 
-    private final double MIN_VALUE = 0.0;
-    private final double MAX_VALUE = 1.0;
-    private final RectHV WRAPPER_RECT = new RectHV(MIN_VALUE, MIN_VALUE, MAX_VALUE, MAX_VALUE);
+    private static final double MIN_VALUE = 0.0;
+    private static final double MAX_VALUE = 1.0;
+    private static final RectHV WRAPPER_RECT = new RectHV(MIN_VALUE, MIN_VALUE, MAX_VALUE, MAX_VALUE);
 
     private static class Node {
         private Point2D point;
         private Node left;
         private Node right;
-        private boolean red;
+        private final boolean red;
 
         public Node(Point2D point, boolean red) {
             this.point = point;
             this.red = red;
         }
 
-        public Double getKey() {
+        public double getKey() {
             return red ? point.x() : point.y();
         }
     }
@@ -51,7 +53,7 @@ public class KdTree {
         if (node == null) {
             return new Node(point, red);
         }
-        int cmp = getKey(point, red).compareTo(node.getKey());
+        double cmp = getKey(point, red) - node.getKey();
         if (cmp < 0) {
             node.left = insert(node.left, point, !red);
         } else if (cmp > 0) {
@@ -62,7 +64,7 @@ public class KdTree {
         return node;
     }
 
-    private Double getKey(Point2D point, boolean red) {
+    private double getKey(Point2D point, boolean red) {
         return red ? point.x() : point.y();
     }
 
@@ -76,7 +78,7 @@ public class KdTree {
     private Node find(Point2D point) {
         Node node = root;
         while (node != null) {
-            int cmp = getKey(point, node.red).compareTo(node.getKey());
+            double cmp = getKey(point, node.red) - node.getKey();
             if (cmp < 0) {
                 node = node.left;
             } else if (cmp > 0) {
@@ -125,12 +127,12 @@ public class KdTree {
     }
 
     public Iterable<Point2D> range(RectHV rect) {
-        SET<Point2D> range = new SET<>();
+        List<Point2D> range = new ArrayList<>();
         range(root, WRAPPER_RECT, rect, range);
         return range;
     }
 
-    private void range(Node node, RectHV rect, RectHV searchRect, SET<Point2D> range) {
+    private void range(Node node, RectHV rect, RectHV searchRect, List<Point2D> range) {
         if (node == null) return;
 
         if (searchRect.intersects(rect)) {
