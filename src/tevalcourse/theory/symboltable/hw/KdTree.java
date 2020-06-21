@@ -5,12 +5,13 @@ import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.SET;
 import edu.princeton.cs.algs4.StdDraw;
 
-import java.awt.*;
-import java.math.BigDecimal;
-
 public class KdTree {
 
-    static class Node {
+    private final double MIN_VALUE = 0.0;
+    private final double MAX_VALUE = 1.0;
+    private final RectHV WRAPPER_RECT = new RectHV(MIN_VALUE, MIN_VALUE, MAX_VALUE, MAX_VALUE);
+
+    private static class Node {
         private Point2D point;
         private Node left;
         private Node right;
@@ -69,7 +70,7 @@ public class KdTree {
         if (p == null) {
             throw new IllegalArgumentException();
         }
-        return find(p) == null;
+        return find(p) != null;
     }
 
     private Node find(Point2D point) {
@@ -92,124 +93,138 @@ public class KdTree {
         StdDraw.setPenColor(StdDraw.BLACK);
         StdDraw.setCanvasSize();
         StdDraw.setScale();
-        draw(root);
+        draw(root, WRAPPER_RECT);
         StdDraw.show();
     }
 
-    private void draw(Node node) {
+    private void draw(Node node, RectHV rect) {
         if (node == null) {
             return;
         }
-        draw(node.left);
 
-        StdDraw.filledCircle(node.point.x(), node.point.y(), 0.005);
+        StdDraw.setPenColor(StdDraw.BLACK);
+        StdDraw.setPenRadius(0.01);
+        new Point2D(node.point.x(), node.point.y()).draw();
+
+        Point2D min, max;
         if (node.red) {
-            StdDraw.setPenColor(Color.RED);
-            StdDraw.line(node.point.x(), Double.MIN_VALUE, node.point.x(), Double.MAX_VALUE);
+            StdDraw.setPenColor(StdDraw.RED);
+            min = new Point2D(node.point.x(), rect.ymin());
+            max = new Point2D(node.point.x(), rect.ymax());
         } else {
-            StdDraw.setPenColor(Color.BLACK);
-            StdDraw.line(Double.MIN_VALUE, node.point.y(), Double.MAX_VALUE, node.point.y());
+            StdDraw.setPenColor(StdDraw.BLUE);
+            min = new Point2D(rect.xmin(), node.point.y());
+            max = new Point2D(rect.xmax(), node.point.y());
         }
 
-        draw(node.right);
+        StdDraw.setPenRadius();
+        min.drawTo(max);
+
+        draw(node.left, leftRect(rect, node));
+        draw(node.right, rightRect(rect, node));
     }
 
     public Iterable<Point2D> range(RectHV rect) {
         SET<Point2D> range = new SET<>();
-        addToRange(root, rect, range);
+        range(root, WRAPPER_RECT, rect, range);
         return range;
     }
 
-    private void addToRange(Node node, RectHV rect, SET<Point2D> range) {
-        if (node == null) {
-            return;
-        }
+    private void range(Node node, RectHV rect, RectHV searchRect, SET<Point2D> range) {
+        if (node == null) return;
 
-        RectHV leftNodeRect, rightNodeRect;
-        if (node.red) {
-            leftNodeRect = new RectHV(Double.MIN_VALUE, Double.MIN_VALUE, node.point.x(), Double.MAX_VALUE);
-            rightNodeRect = new RectHV(node.point.x(), Double.MIN_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
-        } else {
-            leftNodeRect = new RectHV(Double.MIN_VALUE, Double.MIN_VALUE, Double.MAX_VALUE, node.point.y());
-            rightNodeRect = new RectHV(Double.MIN_VALUE, node.point.y(), Double.MAX_VALUE, Double.MAX_VALUE);
-        }
-
-        if (rect.intersects(leftNodeRect)) {
-            node = node.left;
-            addToRange(node, rect, range);
-        }
-        if (rect.intersects(rightNodeRect)) {
-            node = node.right;
-            addToRange(node, rect, range);
-        }
-
-        if (rect.contains(node.point)) {
-            range.add(node.point);
+        if (searchRect.intersects(rect)) {
+            final Point2D p = new Point2D(node.point.x(), node.point.y());
+            if (searchRect.contains(p)) range.add(p);
+            range(node.left, leftRect(rect, node), searchRect, range);
+            range(node.right, rightRect(rect, node), searchRect, range);
         }
     }
+
+    private RectHV leftRect(final RectHV rect, final Node node) {
+        if (node.red) {
+            return new RectHV(rect.xmin(), rect.ymin(), node.point.x(), rect.ymax());
+        } else {
+            return new RectHV(rect.xmin(), rect.ymin(), rect.xmax(), node.point.y());
+        }
+    }
+
+
+    private RectHV rightRect(final RectHV rect, final Node node) {
+        if (node.red) {
+            return new RectHV(node.point.x(), rect.ymin(), rect.xmax(), rect.ymax());
+        } else {
+            return new RectHV(rect.xmin(), node.point.y(), rect.xmax(), rect.ymax());
+        }
+    }
+
 
     public Point2D nearest(Point2D p) {
         if (isEmpty()) {
             return null;
         }
-        return nearest(p, root, null, Double.MAX_VALUE);
+        return nearest(root, WRAPPER_RECT, p, null);
     }
 
-    private Point2D nearest(Point2D point, Node node, Point2D nearest, double minDistance) {
+    private Point2D nearest(Node node, RectHV rect, Point2D query, Point2D candidate) {
         if (node == null) {
-            return nearest;
+            return candidate;
         }
 
-        RectHV leftNodeRect, rightNodeRect;
-        if (node.red) {
-            leftNodeRect = new RectHV(Double.MIN_VALUE, Double.MIN_VALUE, node.point.x(), Double.MAX_VALUE);
-            rightNodeRect = new RectHV(node.point.x(), Double.MIN_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
-        } else {
-            leftNodeRect = new RectHV(Double.MIN_VALUE, Double.MIN_VALUE, Double.MAX_VALUE, node.point.y());
-            rightNodeRect = new RectHV(Double.MIN_VALUE, node.point.y(), Double.MAX_VALUE, Double.MAX_VALUE);
+        double dqn = 0.0;
+        double drq = 0.0;
+
+        Point2D nearest = candidate;
+
+        if (nearest != null) {
+            dqn = query.distanceSquaredTo(nearest);
+            drq = rect.distanceSquaredTo(query);
         }
 
-        double leftDistance = distance(point, leftNodeRect);
-        if (minDistance > leftDistance) {
-            node = node.left;
-            return nearest(point, node, node != null ? node.point : nearest, leftDistance);
+        if (nearest == null || dqn > drq) {
+            if (nearest == null || dqn > query.distanceSquaredTo(node.point) && !node.point.equals(query)) {
+                nearest = node.point;
+            }
+            if (node.red) {
+                RectHV left = new RectHV(rect.xmin(), rect.ymin(), node.point.x(), rect.ymax());
+                RectHV right = new RectHV(node.point.x(), rect.ymin(), rect.xmax(), rect.ymax());
+
+                if (query.x() < node.point.x()) {
+                    nearest = nearest(node.left, left, query, nearest);
+                    nearest = nearest(node.right, right, query, nearest);
+                } else {
+                    nearest = nearest(node.right, right, query, nearest);
+                    nearest = nearest(node.left, left, query, nearest);
+                }
+            } else {
+                RectHV left = new RectHV(rect.xmin(), rect.ymin(), rect.xmax(), node.point.y());
+                RectHV right = new RectHV(rect.xmin(), node.point.y(), rect.xmax(), rect.ymax());
+
+                if (query.y() < node.point.y()) {
+                    nearest = nearest(node.left, left, query, nearest);
+                    nearest = nearest(node.right, right, query, nearest);
+                } else {
+                    nearest = nearest(node.right, right, query, nearest);
+                    nearest = nearest(node.left, left, query, nearest);
+                }
+            }
         }
 
-        double rightDistance = distance(point, rightNodeRect);
-        if (minDistance > rightDistance) {
-            node = node.right;
-            return nearest(point, node, node != null ? node.point : nearest, rightDistance);
-        }
-
-        return node.point;
+        return nearest;
     }
 
-    private double distance(Point2D p1, RectHV rect) {
-        double yDiff = Math.abs(BigDecimal.valueOf(p1.y())
-                .subtract(BigDecimal.valueOf(rect.ymax()))
-                .doubleValue());
-        if (p1.x() == rect.xmax()) {
-            return yDiff;
-        }
-
-        double xDiff = Math.abs(BigDecimal.valueOf(p1.x())
-                .subtract(BigDecimal.valueOf(rect.xmax()))
-                .doubleValue());
-        if (p1.y() == rect.ymax()) {
-            return xDiff;
-        }
-
-        return Math.sqrt(Math.pow(yDiff, 2) + Math.pow(xDiff, 2));
-    }
 
     public static void main(String[] args) {
-        PointSET points = new PointSET();
+        KdTree points = new KdTree();
 
         assert points.isEmpty();
 
-        points.insert(new Point2D(0.0, 0.0));
-        points.insert(new Point2D(0.1, 0.4));
-        points.insert(new Point2D(0.4, 0.3));
+        Point2D p = new Point2D(0.4, 0.3);
+        Point2D p1 = new Point2D(0.0, 0.0);
+        Point2D p2 = new Point2D(0.1, 0.4);
+        points.insert(p1);
+        points.insert(p2);
+        points.insert(p);
         points.insert(new Point2D(0.6, 0.5));
         points.insert(new Point2D(0.8, 0.6));
 
@@ -219,8 +234,14 @@ public class KdTree {
         assert points.contains(new Point2D(0.0, 0.0));
         assert !points.contains(new Point2D(1, 2));
 
-        Point2D nearest = points.nearest(new Point2D(0.4, 0.3));
-        assert nearest.equals(new Point2D(0.6, 0.5));
+        Point2D nearest = points.nearest(p);
+        System.out.println(String.format("Nearest to %s is %s ", p, nearest));
+
+        nearest = points.nearest(p1);
+        System.out.println(String.format("Nearest to %s is %s ", p1, nearest));
+
+        nearest = points.nearest(p2);
+        System.out.println(String.format("Nearest to %s is %s ", p2, nearest));
 
         Iterable<Point2D> range = points.range(new RectHV(0.4, 0.3, 0.8, 0.6));
         range.forEach(System.out::println);

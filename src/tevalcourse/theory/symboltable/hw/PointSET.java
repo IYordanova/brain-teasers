@@ -5,8 +5,6 @@ import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.SET;
 import edu.princeton.cs.algs4.StdDraw;
 
-import java.math.BigDecimal;
-
 
 public class PointSET {
 
@@ -70,31 +68,13 @@ public class PointSET {
             if (point.equals(p)) {
                 continue;
             }
-            double distance = distance(p, point);
+            double distance = p.distanceTo(point);
             if (distance < minDistance) {
                 minDistance = distance;
                 nearest = point;
             }
         }
         return nearest;
-    }
-
-    private double distance(Point2D p1, Point2D p2) {
-        double yDiff = Math.abs(BigDecimal.valueOf(p1.y())
-                .subtract(BigDecimal.valueOf(p2.y()))
-                .doubleValue());
-        if (p1.x() == p2.x()) {
-            return yDiff;
-        }
-
-        double xDiff = Math.abs(BigDecimal.valueOf(p1.x())
-                .subtract(BigDecimal.valueOf(p2.x()))
-                .doubleValue());
-        if (p1.y() == p2.y()) {
-            return xDiff;
-        }
-
-        return Math.sqrt(Math.pow(yDiff, 2) + Math.pow(xDiff, 2));
     }
 
     public static void main(String[] args) {
@@ -113,10 +93,6 @@ public class PointSET {
         assert points.contains(new Point2D(0.1, 0.4));
         assert points.contains(new Point2D(0.0, 0.0));
         assert !points.contains(new Point2D(1, 2));
-
-        assert points.distance(new Point2D(0.0, 0.0), new Point2D(0.4, 0.3)) == 0.5;
-        assert points.distance(new Point2D(0.1, 0.4), new Point2D(0.1, 0.7)) == 0.3;
-        assert points.distance(new Point2D(0.2, 0.3), new Point2D(0.4, 0.3)) == 0.2;
 
         Point2D nearest = points.nearest(new Point2D(0.4, 0.3));
         assert nearest.equals(new Point2D(0.6, 0.5));
