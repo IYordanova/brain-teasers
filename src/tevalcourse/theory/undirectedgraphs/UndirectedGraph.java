@@ -26,7 +26,7 @@ import edu.princeton.cs.algs4.StdOut;
     - for every vertex -> list of connected ones
     - vertices in array
  */
-public class UndirectedGraph {
+public class UndirectedGraph implements Graph {
 
     private final int V;
     private Bag<Integer>[] adj;
@@ -54,19 +54,23 @@ public class UndirectedGraph {
         }
     }
 
+    @Override
     public void addEdge(int v, int w) {
         adj[v].add(w);
         adj[w].add(v);
     }
 
+    @Override
     public Iterable<Integer> adj(int v) {
         return adj[v];
     }
 
+    @Override
     public int v() {
         return V;
     }
 
+    @Override
     public int e() {
         int count = 0;
         for (int v = 0; v < V; v++) {
