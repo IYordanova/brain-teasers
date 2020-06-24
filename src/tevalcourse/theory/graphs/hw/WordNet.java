@@ -5,12 +5,14 @@ import edu.princeton.cs.algs4.DirectedCycle;
 import edu.princeton.cs.algs4.In;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class WordNet {
 
     private final Digraph digraph;
-    private final Map<String, Integer> nouns;
+    private final Map<String, Set<Integer>> nouns;
     private final Map<Integer, String> synsets;
     private final SAP sap;
 
@@ -29,23 +31,14 @@ public class WordNet {
 
         this.sap = new SAP(digraph);
 
-        validateDag(numVertices);
+        validateDag();
     }
 
-    private void validateDag(int numVertices) {
+    private void validateDag() {
         DirectedCycle directedCycle = new DirectedCycle(digraph);
         if (directedCycle.hasCycle()) {
             throw new IllegalArgumentException("Graph is not acyclic.");
         }
-        int rootCount = 0;
-        for (int v = 0; v < numVertices; v++) {
-            if (digraph.outdegree(v) == 0) {
-                rootCount++;
-            }
-        }
-//        if (rootCount != 1) {
-//            throw new IllegalArgumentException("Input is not rooted.");
-//        }
     }
 
     private void readHypernyms(String hypernyms) {
@@ -70,7 +63,8 @@ public class WordNet {
 
             String[] nounsInSynset = synset.split("\\s+");
             for (String noun : nounsInSynset) {
-                nouns.put(noun, id);
+                nouns.putIfAbsent(noun, new HashSet<>());
+                nouns.get(noun).add(id);
             }
         }
         return nouns.size();
@@ -103,6 +97,12 @@ public class WordNet {
 
     public static void main(String[] args) {
         WordNet wordNet = new WordNet(args[0], args[1]);
-        wordNet.isNoun("asd");
+
+        System.out.println(wordNet.distance("lomustine", "crosscut"));
+        System.out.println(wordNet.distance("low-density_lipoprotein", "oil"));
+        System.out.println(wordNet.distance("ossicle", "safflower_oil"));
+
+        System.out.println(wordNet.sap("suicide", "Caesar_salad"));
+
     }
 }
