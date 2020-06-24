@@ -32,20 +32,20 @@ public class WordNet {
         validateDag(numVertices);
     }
 
-    private void validateDag(int V) {
+    private void validateDag(int numVertices) {
         DirectedCycle directedCycle = new DirectedCycle(digraph);
         if (directedCycle.hasCycle()) {
             throw new IllegalArgumentException("Graph is not acyclic.");
         }
         int rootCount = 0;
-        for (int v = 0; v < V; v++) {
+        for (int v = 0; v < numVertices; v++) {
             if (digraph.outdegree(v) == 0) {
                 rootCount++;
             }
         }
-        if (rootCount != 1) {
-            throw new IllegalArgumentException("Input is not rooted.");
-        }
+//        if (rootCount != 1) {
+//            throw new IllegalArgumentException("Input is not rooted.");
+//        }
     }
 
     private void readHypernyms(String hypernyms) {

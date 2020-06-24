@@ -58,12 +58,18 @@ public class SAP {
 
 
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
-        validateVertices(v, w);
+        int minNumVertices = validateVertices(v, w);
+        if (minNumVertices == 0) {
+            return -1;
+        }
         return sap(v, w).getValue();
     }
 
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
-        validateVertices(v, w);
+        int minNumVertices = validateVertices(v, w);
+        if (minNumVertices == 0) {
+            return -1;
+        }
         return sap(v, w).getKey();
     }
 
@@ -128,25 +134,27 @@ public class SAP {
             ancestor = -1;
         }
 
-        return Map.entry(distance, ancestor);
+        return Map.entry(ancestor, distance);
     }
 
     private void validateVertices(int v, int w) {
-        int V = digraph.V();
-        if ((v < 0 || v >= V) || (w < 0 || w >= V)) {
+        int numVertices = digraph.V();
+        if ((v < 0 || v >= numVertices) || (w < 0 || w >= numVertices)) {
             throw new IllegalArgumentException("Vertex not in range " + v);
         }
     }
 
-    private void validateVertices(Iterable<Integer> v, Iterable<Integer> w) {
+    private int validateVertices(Iterable<Integer> v, Iterable<Integer> w) {
         if (v == null || w == null) {
             throw new IllegalArgumentException("Null not valid argument");
         }
-        validateVertices(v);
-        validateVertices(w);
+        int numVerticesV = validateVertices(v);
+        int numVerticesW = validateVertices(w);
+        return Math.min(numVerticesV, numVerticesW);
     }
 
-    private void validateVertices(Iterable<Integer> vertices) {
+    private int validateVertices(Iterable<Integer> vertices) {
+        int numVertices = 0;
         for (Integer v : vertices) {
             if (v == null) {
                 throw new IllegalArgumentException("Null not valid argument");
@@ -154,7 +162,9 @@ public class SAP {
             if (v < 0 || v >= digraph.V()) {
                 throw new IllegalArgumentException("Vertex not in range " + v);
             }
+            numVertices++;
         }
+        return numVertices;
     }
 
     public static void main(String[] args) {
