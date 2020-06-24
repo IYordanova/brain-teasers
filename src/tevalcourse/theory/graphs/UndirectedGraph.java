@@ -1,4 +1,4 @@
-package tevalcourse.theory.undirectedgraphs;
+package tevalcourse.theory.graphs;
 
 import edu.princeton.cs.algs4.Bag;
 import edu.princeton.cs.algs4.In;
@@ -80,42 +80,6 @@ public class UndirectedGraph implements Graph {
         }
         return count;
     }
-
-    public static int degree(UndirectedGraph graph, int v) {
-        int degree = 0;
-        for (int w : graph.adj(v)) {
-            degree++;
-        }
-        return degree;
-    }
-
-    public static int maxDegree(UndirectedGraph graph) {
-        int max = 0;
-        for (int v = 0; v < graph.v(); v++) {
-            int degree = degree(graph, v);
-            if (degree > max) {
-                max = degree;
-            }
-        }
-        return max;
-    }
-
-    public static double averageDegree(UndirectedGraph graph) {
-        return 2.0 * graph.e() / graph.v();
-    }
-
-    public static int numberOfSelfLoops(UndirectedGraph graph) {
-        int count = 0;
-        for (int v = 0; v < graph.v(); v++) {
-            for (int w : graph.adj(v)) {
-                if (v == w) {
-                    count++;
-                }
-            }
-        }
-        return count;
-    }
-
 
     public static void main(String[] args) {
         In in = new In(args[0]);

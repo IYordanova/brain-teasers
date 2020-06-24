@@ -1,32 +1,41 @@
-package tevalcourse.theory.undirectedgraphs;
-
+package tevalcourse.theory.graphs;
 
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 
+import edu.princeton.cs.algs4.Queue;
+
 import java.util.Stack;
 
 
-public class DeptFirstPaths {
-
+/*
+  Application - routing, shortest path
+ */
+public class BreathFirstPath {
     private final boolean[] visited;
     private final int[] edgeTo;
     private final int s;
 
 
-    public DeptFirstPaths(Graph graph, int s) {
+    public BreathFirstPath(Graph graph, int s) {
         this.visited = new boolean[graph.v()];
         this.edgeTo = new int[graph.v()];
         this.s = s;
-        dfs(graph, s);
+        bfs(graph, s);
     }
 
-    private void dfs(Graph graph, int v) {
-        visited[v] = true;
-        for (int w : graph.adj(v)) {
-            if (!visited[w]) {
-                dfs(graph, w);
-                edgeTo[w] = v;
+    private void bfs(Graph graph, int s) {
+        Queue<Integer> q = new Queue<>();
+        q.enqueue(s);
+        visited[s] = true;
+        while (!q.isEmpty()) {
+            int v = q.dequeue();
+            for (int w : graph.adj(v)) {
+                if (!visited[w]) {
+                    q.enqueue(w);
+                    visited[w] = true;
+                    edgeTo[w] = v;
+                }
             }
         }
     }
@@ -50,12 +59,11 @@ public class DeptFirstPaths {
         In in = new In(args[0]);
         int s = Integer.parseInt(args[1]);
         Graph graph = new UndirectedGraph(in);
-        DeptFirstPaths paths = new DeptFirstPaths(graph, s);
+        BreathFirstPath paths = new BreathFirstPath(graph, s);
         for (int v = 0; v < graph.v(); v++) {
             if (paths.hasPathTo(v)) {
                 StdOut.println(v);
             }
         }
     }
-
 }

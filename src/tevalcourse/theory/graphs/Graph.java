@@ -1,4 +1,4 @@
-package tevalcourse.theory.undirectedgraphs;
+package tevalcourse.theory.graphs;
 
 public interface Graph {
     void addEdge(int v, int w);

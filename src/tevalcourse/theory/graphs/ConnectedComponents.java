@@ -1,4 +1,4 @@
-package tevalcourse.theory.undirectedgraphs;
+package tevalcourse.theory.graphs;
 
 public class ConnectedComponents {
     private final boolean[] visited;
@@ -27,7 +27,7 @@ public class ConnectedComponents {
     }
 
     public boolean connected(int v, int w) {
-        return
+        return id[v] == id[w];
     }
 
     public int count() {
