@@ -30,7 +30,6 @@ public class WordNet {
         readHypernyms(hypernymsFile);
 
         this.sap = new SAP(digraph);
-
         validateDag();
     }
 
