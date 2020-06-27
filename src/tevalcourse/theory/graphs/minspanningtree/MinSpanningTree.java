@@ -1,4 +1,4 @@
-package tevalcourse.theory.minspanningtree;
+package tevalcourse.theory.graphs.minspanningtree;
 
 
 import edu.princeton.cs.algs4.*;

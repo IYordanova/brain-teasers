@@ -1,4 +1,4 @@
-package tevalcourse.theory.minspanningtree;
+package tevalcourse.theory.graphs.minspanningtree;
 
 public class Edge implements Comparable<Edge> {
 
