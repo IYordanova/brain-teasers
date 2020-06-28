@@ -1,15 +1,9 @@
 package tevalcourse.theory.graphs.shortestpaths.hw;
 
 import edu.princeton.cs.algs4.Picture;
-import edu.princeton.cs.algs4.Queue;
-import edu.princeton.cs.algs4.Stack;
 
-import java.util.Arrays;
 import java.awt.Color;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
+import java.util.Arrays;
 
 public class SeamCarver {
 
@@ -17,35 +11,6 @@ public class SeamCarver {
 
     private Picture picture;
     private double[][] energy;
-
-    private static class Pixel {
-        int x;
-        int y;
-
-        public Pixel(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Pixel pixel = (Pixel) o;
-            return x == pixel.x && y == pixel.y;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(x, y);
-        }
-
-        @Override
-        public String toString() {
-            return "(" + x + ", " + y + ")";
-        }
-    }
-
 
     public SeamCarver(Picture picture) {
         if (picture == null) {
@@ -83,7 +48,7 @@ public class SeamCarver {
     }
 
     public Picture picture() {
-        return picture;
+        return new Picture(picture);
     }
 
     public int width() {
@@ -105,115 +70,114 @@ public class SeamCarver {
         int width = width();
         int height = height();
 
-        int[] minSeam = null;
-        double seamMinWeight = Double.POSITIVE_INFINITY;
+        double[][] distTo = new double[width][height];
+        int[][] edgeTo = new int[width][height];
 
-        for (int row = 0; row < height; row++) {
-            Map<Pixel, Pixel> edgeFrom = new HashMap<>();
-            Map<Pixel, Double> distTo = new HashMap<>();
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                distTo[x][y] = x == 0 ? energy[x][y] : Double.POSITIVE_INFINITY;
+            }
+        }
 
-            Queue<Pixel> pq = new Queue<>();
-            Pixel start = new Pixel(0, row);
-            pq.enqueue(start);
-            distTo.put(start, energy[start.x][start.y]);
+        for (int x = 1; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                double minEnergy = distTo[x - 1][y];
+                int minCol = y;
 
-            while (!pq.isEmpty()) {
-                Pixel currentPixel = pq.dequeue();
-                int x = currentPixel.x + 1;
-                int y = currentPixel.y;
-                if (x < width - 1) {
-                    if (y > 0) {
-                        relax(pq, distTo, edgeFrom, currentPixel, new Pixel(x, y - 1));
-                    }
-                    if (y < height - 1) {
-                        relax(pq, distTo, edgeFrom, currentPixel, new Pixel(x, y + 1));
-                    }
-                    if (x < width - 1) {
-                        relax(pq, distTo, edgeFrom, currentPixel, new Pixel(x + 1, y));
+                if (y != 0) {
+                    if (distTo[x - 1][y - 1] < minEnergy) {
+                        minEnergy = distTo[x - 1][y - 1];
+                        minCol = y - 1;
                     }
                 }
-            }
 
-            Stack<Pixel> mst = new Stack<>();
-            double sumWeight = 0;
-            for (Pixel p = start; p != null; p = edgeFrom.get(p)) {
-                mst.push(p);
-                sumWeight += distTo.get(p);
-            }
+                if (y != height - 1) {
+                    if (distTo[x - 1][y + 1] < minEnergy) {
+                        minEnergy = distTo[x - 1][y + 1];
+                        minCol = y + 1;
+                    }
+                }
 
-            if (sumWeight < seamMinWeight) {
-                seamMinWeight = sumWeight;
-                minSeam = new int[mst.size()];
-                Iterator<Pixel> iterator = mst.iterator();
-                int i = 0;
-                while (iterator.hasNext()) {
-                    minSeam[i] = iterator.next().x;
+                if (energy[x][y] + minEnergy < distTo[x][y]) {
+                    distTo[x][y] = energy[x][y] + minEnergy;
+                    edgeTo[x][y] = minCol;
                 }
             }
         }
 
-        return minSeam;
+        double minEnergyLastRow = Double.POSITIVE_INFINITY;
+        int minRolLastCol = 0;
+        for (int i = 0; i < height; i++) {
+            if (distTo[width - 1][i] < minEnergyLastRow) {
+                minEnergyLastRow = distTo[width - 1][i];
+                minRolLastCol = i;
+            }
+        }
+
+        int[] horSeam = new int[width];
+        for (int i = width - 1; i >= 0; i--) {
+            horSeam[i] = minRolLastCol;
+            minRolLastCol = edgeTo[i][minRolLastCol];
+        }
+
+        return horSeam;
     }
 
     public int[] findVerticalSeam() {
         int width = width();
         int height = height();
 
-        int[] minSeam = null;
-        double seamMinWeight = Double.POSITIVE_INFINITY;
+        double[][] distTo = new double[width][height];
+        int[][] edgeTo = new int[width][height];
 
-        for (int col = 0; col < width; col++) {
-            Map<Pixel, Pixel> edgeFrom = new HashMap<>();
-            Map<Pixel, Double> distTo = new HashMap<>();
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                distTo[x][y] = y == 0 ? energy[x][y] : Double.POSITIVE_INFINITY;
+            }
+        }
 
-            Queue<Pixel> pq = new Queue<>();
-            Pixel start = new Pixel(col, 0);
-            pq.enqueue(start);
-            distTo.put(start, energy[start.x][start.y]);
+        for (int y = 1; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                double minEnergy = distTo[x][y - 1];
+                int minCol = x;
 
-            while (!pq.isEmpty()) {
-                Pixel currentPixel = pq.dequeue();
-                int x = currentPixel.x;
-                int y = currentPixel.y + 1;
-                if (y < height - 1) {
-                    if (x > 0) {
-                        relax(pq, distTo, edgeFrom, currentPixel, new Pixel(x - 1, y));
+                if (x != 0) {
+                    if (distTo[x - 1][y - 1] < minEnergy) {
+                        minEnergy = distTo[x - 1][y - 1];
+                        minCol = x - 1;
                     }
-                    if (x < width - 1) {
-                        relax(pq, distTo, edgeFrom, currentPixel, new Pixel(x + 1, y));
-                    }
-                    relax(pq, distTo, edgeFrom, currentPixel, new Pixel(x, y));
                 }
-            }
 
-            Stack<Pixel> mst = new Stack<>();
-            double sumWeight = 0;
-            for (Pixel p = start; p != null; p = edgeFrom.get(p)) {
-                mst.push(p);
-                sumWeight += distTo.get(p);
-            }
+                if (x != width - 1) {
+                    if (distTo[x + 1][y - 1] < minEnergy) {
+                        minEnergy = distTo[x + 1][y - 1];
+                        minCol = x + 1;
+                    }
+                }
 
-            if (sumWeight < seamMinWeight) {
-                seamMinWeight = sumWeight;
-                minSeam = new int[mst.size()];
-                Iterator<Pixel> iterator = mst.iterator();
-                int i = 0;
-                while (iterator.hasNext()) {
-                    minSeam[i] = iterator.next().y;
+                if (energy[x][y] + minEnergy < distTo[x][y]) {
+                    distTo[x][y] = energy[x][y] + minEnergy;
+                    edgeTo[x][y] = minCol;
                 }
             }
         }
 
-        return minSeam;
-    }
-
-    private void relax(Queue<Pixel> pq, Map<Pixel, Double> distTo, Map<Pixel, Pixel> edgeFrom, Pixel v, Pixel w) {
-        double weight = energy[w.x][w.y];
-        if (distTo.get(w) == null || distTo.get(w) > distTo.get(v) + weight) {
-            distTo.put(w, distTo.get(v) + weight);
-            edgeFrom.put(w, v);
-            pq.enqueue(w);
+        double minEnergyLastCol = Double.POSITIVE_INFINITY;
+        int minColLastRow = 0;
+        for (int i = 0; i < width; i++) {
+            if (distTo[i][height - 1] < minEnergyLastCol) {
+                minEnergyLastCol = distTo[i][height - 1];
+                minColLastRow = i;
+            }
         }
+
+        int[] vertSeam = new int[height];
+        for (int i = height - 1; i >= 0; i--) {
+            vertSeam[i] = minColLastRow;
+            minColLastRow = edgeTo[minColLastRow][i];
+        }
+
+        return vertSeam;
     }
 
     public void removeHorizontalSeam(int[] seam) {
@@ -239,7 +203,6 @@ public class SeamCarver {
                 }
             }
         }
-        this.picture = resizedPicture;
 
         double[][] newEnergy = new double[width][height];
         for (int x = 0; x < width; x++) {
@@ -251,7 +214,9 @@ public class SeamCarver {
                 }
             }
         }
+
         this.energy = newEnergy;
+        this.picture = resizedPicture;
     }
 
     public void removeVerticalSeam(int[] seam) {
@@ -276,7 +241,6 @@ public class SeamCarver {
                 }
             }
         }
-        this.picture = resizedPicture;
 
         double[][] newEnergy = new double[width][height];
         for (int y = 0; y < height; y++) {
@@ -288,7 +252,9 @@ public class SeamCarver {
                 }
             }
         }
+
         this.energy = newEnergy;
+        this.picture = resizedPicture;
     }
 
     private void validateSeam(int[] seam, int expectedLen, int maxValue) {
@@ -303,7 +269,8 @@ public class SeamCarver {
             }
 
             int nextPixel = seam[i + 1];
-            if (nextPixel - pixel != 1) {
+            int diff = nextPixel - pixel;
+            if (diff > 1 || diff < -1) {
                 throw new IllegalArgumentException("Seam pixels differ by more than 1");
             }
         }
@@ -312,7 +279,18 @@ public class SeamCarver {
 
     public static void main(String[] args) {
         SeamCarver seamCarver = new SeamCarver(new Picture(args[0]));
-        System.out.println(Arrays.toString(seamCarver.findVerticalSeam()));
-        //System.out.println(Arrays.toString(seamCarver.findHorizontalSeam()));
+        System.out.println(seamCarver.width() + " " + seamCarver.height());
+
+        int[] verticalSeam = seamCarver.findVerticalSeam();
+        System.out.println(Arrays.toString(verticalSeam));
+
+        seamCarver.removeVerticalSeam(verticalSeam);
+        System.out.println(seamCarver.width() + " " + seamCarver.height());
+
+        int[] horizontalSeam = seamCarver.findHorizontalSeam();
+        System.out.println(Arrays.toString(horizontalSeam));
+
+        seamCarver.removeHorizontalSeam(horizontalSeam);
+        System.out.println(seamCarver.width() + " " + seamCarver.height());
     }
 }
