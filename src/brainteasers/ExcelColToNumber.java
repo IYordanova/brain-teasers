@@ -15,9 +15,24 @@ public class ExcelColToNumber {
         return sum;
     }
 
+    private static String numberToTitle(int col) {
+        StringBuilder res = new StringBuilder();
+
+        while (col > 0) {
+            int index = (col - 1) % 26;
+            res.append((char) (index + 'A'));
+            col = (col - 1) / 26;
+        }
+
+        return res.reverse().toString();
+    }
+
 
     public static void main(String[] args) {
-        System.out.println(titleToNumber("AB"));
-        System.out.println(titleToNumber("AZA"));
+        assert titleToNumber("AB") == 28;
+        assert titleToNumber("AZA") == 1353;
+
+        assert numberToTitle(28).equals("AB");
+        assert numberToTitle(1353).equals("AZA");
     }
 }
