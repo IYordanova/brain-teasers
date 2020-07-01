@@ -1,9 +1,6 @@
 package tevalcourse.autocomplete;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AutoCompleter {
@@ -23,34 +20,40 @@ public class AutoCompleter {
             System.out.println(NO_MATCHES_MESSAGE);
             return;
         }
-        solveHelper(queries, new ArrayList<>(), 0).forEach(System.out::println);
-    }
+        List<List<String>> allQueries = queries.stream()
+                .sequential()
+                .map(query -> {
+                    List<String> altQueries = new ArrayList<>(spellChecker.typos(query));
+                    altQueries.add(query);
+                    return altQueries;
+                })
+                .collect(Collectors.toList());
 
-    private List<String> solveHelper(List<String> queries, List<String> result, int i) {
-        if (i == queries.size()) {
-            return result;
-        }
-        String query = queries.get(i).toLowerCase().trim();
-        if (query.isBlank()) {
-            result.add(NO_MATCHES_MESSAGE);
-            return solveHelper(queries, result, ++i);
-        }
-        Set<String> candidates = trie.find(query, LIMIT);
-        if (candidates.size() < LIMIT){
-            Set<String> altQueries = spellChecker.typos(query);
-            Iterator<String> it = altQueries.iterator();
-            while (candidates.size() < LIMIT && it.hasNext()) {
-                candidates.addAll(trie.find(it.next(), LIMIT));
+        for(List<String> query: allQueries) {
+            Set<String> result = solveHelper(query.iterator(), new HashSet<>());
+            if (result.isEmpty()) {
+                System.out.println(NO_MATCHES_MESSAGE);
+            } else {
+                System.out.println(result.stream()
+                        .sorted()
+                        .sequential()
+                        .limit(LIMIT)
+                        .collect(Collectors.joining(" ")) + " ");
             }
         }
-        result.add(candidates.isEmpty()
-                ? NO_MATCHES_MESSAGE
-                : candidates.stream()
-                .sorted()
-                .sequential()
-                .limit(LIMIT)
-                .collect(Collectors.joining(" ")));
-        return solveHelper(queries, result, ++i);
+    }
+
+    private Set<String> solveHelper(Iterator<String> queries, Set<String> result) {
+        if (!queries.hasNext() || result.size() >= LIMIT) {
+            return result;
+        }
+        String query = queries.next().toLowerCase().trim();
+        if (query.isBlank()) {
+            result.add(NO_MATCHES_MESSAGE);
+            return solveHelper(queries, result);
+        }
+        result.addAll(trie.find(query));
+        return solveHelper(queries, result);
     }
 
 }

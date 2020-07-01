@@ -1,10 +1,6 @@
 package tevalcourse.autocomplete;
 
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 
 
 public class Trie {
@@ -35,7 +31,7 @@ public class Trie {
         return result;
     }
 
-    private Set<String> getCandidates(Node node, int limit) {
+    private Set<String> getCandidates(Node node) {
         Deque<Node> queue = new LinkedList<>();
         queue.add(node);
         Set<String> result = new HashSet<>();
@@ -44,18 +40,19 @@ public class Trie {
             String word = currentNode.getWord();
             if (word != null) {
                 result.add(word);
-                if(result.size() >= limit) {
-                    break;
-                }
             }
             queue.addAll(currentNode.getChildNodes());
         }
         return result;
     }
 
-    public Set<String> find(String query, int limit) {
+    public Set<String> find(String query) {
         Node node = locateNode(root, query);
-        return getCandidates(node, limit);
+        if (node.getWord() == null && (node.getChildNodes() == null || node.getChildNodes().isEmpty())) {
+            return Collections.emptySet();
+        }
+        Set<String> result = getCandidates(node);
+        return result;
     }
 
 }
