@@ -20,40 +20,36 @@ public class AutoCompleter {
             System.out.println(NO_MATCHES_MESSAGE);
             return;
         }
-        List<List<String>> allQueries = queries.stream()
-                .sequential()
-                .map(query -> {
-                    List<String> altQueries = new ArrayList<>(spellChecker.typos(query));
-                    altQueries.add(query);
-                    return altQueries;
-                })
-                .collect(Collectors.toList());
 
-        for(List<String> query: allQueries) {
-            Set<String> result = solveHelper(query.iterator(), new HashSet<>());
-            if (result.isEmpty()) {
+        for (String originalQuery : queries) {
+            Set<String> altQueries = spellChecker.typos(originalQuery);
+            int foundMatches = 0;
+            for (String query : altQueries) {
+                if (!query.isBlank()) {
+                    foundMatches += solveHelper(query, LIMIT - foundMatches);
+                    if (foundMatches >= LIMIT) {
+                        break;
+                    }
+                }
+            }
+            if (foundMatches == 0) {
                 System.out.println(NO_MATCHES_MESSAGE);
             } else {
-                System.out.println(result.stream()
-                        .sorted()
-                        .sequential()
-                        .limit(LIMIT)
-                        .collect(Collectors.joining(" ")) + " ");
+                System.out.println();
             }
         }
     }
 
-    private Set<String> solveHelper(Iterator<String> queries, Set<String> result) {
-        if (!queries.hasNext() || result.size() >= LIMIT) {
-            return result;
+    private int solveHelper(String query, int left) {
+        Set<String> c = trie.find(query);
+        if (!c.isEmpty()) {
+            System.out.print(c.stream()
+                    .sorted()
+                    .sequential()
+                    .limit(left)
+                    .collect(Collectors.joining(" ")) + " ");
         }
-        String query = queries.next().toLowerCase().trim();
-        if (query.isBlank()) {
-            result.add(NO_MATCHES_MESSAGE);
-            return solveHelper(queries, result);
-        }
-        result.addAll(trie.find(query));
-        return solveHelper(queries, result);
+        return c.size();
     }
 
 }

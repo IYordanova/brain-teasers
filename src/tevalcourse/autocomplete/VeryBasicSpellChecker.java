@@ -16,6 +16,7 @@ public class VeryBasicSpellChecker {
                 toReturn.add(replaceChar(chars, ch, i));
             }
         }
+        toReturn.add(input);
         return toReturn;
     }
 

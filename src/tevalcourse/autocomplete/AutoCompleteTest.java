@@ -29,11 +29,10 @@ public class AutoCompleteTest extends BaseTest {
     }
 
     public static void main(String[] args) throws IOException {
-//        TestCase testCase1 = prepareTestCase("autocomplete_1");
-//        new AutoCompleter(testCase1.words).solve(testCase1.queries);
+        final Scanner sc = new Scanner(System.in);
 
         long start = System.currentTimeMillis();
-        TestCase testCase2 = prepareTestCase("autocomplete_2");
+        TestCase testCase2 = prepareTestCase("autocomplete_7");
         new AutoCompleter(testCase2.words).solve(testCase2.queries);
         long end = System.currentTimeMillis();
         System.out.println(end - start);

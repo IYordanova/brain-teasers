@@ -21,14 +21,16 @@ public class Trie {
     }
 
     private Node locateNode(Node root, String prefix) {
-        Node result = root;
-        for (char c : prefix.toCharArray()) {
-            result = result.getChild(c);
-            if (result == null) {
+        Node current = root;
+        char[] chars = prefix.toCharArray();
+        for (char ch : chars) {
+            Node node = current.getChild(ch);
+            if (node == null) {
                 break;
             }
+            current = node;
         }
-        return result;
+        return current;
     }
 
     private Set<String> getCandidates(Node node) {
@@ -51,8 +53,7 @@ public class Trie {
         if (node.getWord() == null && (node.getChildNodes() == null || node.getChildNodes().isEmpty())) {
             return Collections.emptySet();
         }
-        Set<String> result = getCandidates(node);
-        return result;
+        return getCandidates(node);
     }
 
 }
