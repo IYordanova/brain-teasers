@@ -19,7 +19,8 @@ public class BaseballElimination {
     private final int[] r;
     private final int[][] g;
 
-    private int leadingTeam;
+    private int leadingTeamId;
+    private String leadingTeam;
 
 
     public BaseballElimination(String filename) {
@@ -40,14 +41,17 @@ public class BaseballElimination {
 
     private void createDivision(int numTeams, In in) {
         int maxWins = 0;
-        int team = 0;
+        int lTeam = 0;
+        String lTeamName = "";
         for (int i = 0; i < numTeams; i++) {
-            teams.put(in.readString(), i);
+            String teamName = in.readString();
+            teams.put(teamName, i);
 
             int wins = in.readInt();
             if (wins > maxWins) {
                 maxWins = wins;
-                team = i;
+                lTeam = i;
+                lTeamName = teamName;
             }
 
             w[i] = wins;
@@ -59,7 +63,8 @@ public class BaseballElimination {
             }
             in.readLine();
         }
-        leadingTeam = team;
+        leadingTeamId = lTeam;
+        leadingTeam = lTeamName;
     }
 
     public int numberOfTeams() {
@@ -111,8 +116,8 @@ public class BaseballElimination {
         int numGames = numberOfTeams() * (numberOfTeams() - 1) / 2;
         FlowNetwork flowNetwork = createEliminationNetwork(team, numGames);
 
-        int source = 0, target = flowNetwork.V() - 1;
-        FordFulkerson fordFulkerson = new FordFulkerson(flowNetwork, source, target);
+        int source = 0;
+        FordFulkerson fordFulkerson = new FordFulkerson(flowNetwork, source, flowNetwork.V() - 1);
 
         for (FlowEdge e : flowNetwork.adj(source)) {
             if (e.flow() != e.capacity()) {
@@ -125,7 +130,13 @@ public class BaseballElimination {
 
     private boolean isTriviallyEliminated(String team) {
         Integer teamId = teams.get(team);
-        return w[teamId] + r[teamId] < w[leadingTeam];
+        if(w[teamId] + r[teamId] < w[leadingTeamId]) {
+            ArrayList<String> certificate = new ArrayList<>();
+            certificate.add(leadingTeam);
+            eliminatedTeamsCertificates.put(team, certificate);
+            return true;
+        }
+        return false;
     }
 
     private FlowNetwork createEliminationNetwork(String team, int numGames) {
@@ -167,8 +178,12 @@ public class BaseballElimination {
             throw new IllegalArgumentException("Unknown team.");
         }
         ArrayList<String> certificate = eliminatedTeamsCertificates.get(team);
-        if (certificate == null && isEliminated(team)) {
-            return eliminatedTeamsCertificates.get(team);
+        if (certificate == null) {
+            if (isEliminated(team)) {
+                return eliminatedTeamsCertificates.get(team);
+            } else {
+                return null;
+            }
         }
         return certificate;
     }
