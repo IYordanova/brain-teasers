@@ -3,7 +3,8 @@ package tevalcourse.autocomplete;
 import tevalcourse.BaseTest;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AutoCompleteTest extends BaseTest {
 
@@ -29,10 +30,8 @@ public class AutoCompleteTest extends BaseTest {
     }
 
     public static void main(String[] args) throws IOException {
-        final Scanner sc = new Scanner(System.in);
-
         long start = System.currentTimeMillis();
-        TestCase testCase2 = prepareTestCase("autocomplete_7");
+        TestCase testCase2 = prepareTestCase("autocomplete_1");
         new AutoCompleter(testCase2.words).solve(testCase2.queries);
         long end = System.currentTimeMillis();
         System.out.println(end - start);
