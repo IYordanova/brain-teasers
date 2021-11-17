@@ -9,7 +9,7 @@ public class Combinations {
             return ans;
         }
         ArrayList<Integer> temp = new ArrayList<>();
-        combineHelper(A, B, ans, temp,1);
+        combineHelper(A, B, ans, temp,0);
         return ans;
     }
 
@@ -37,6 +37,9 @@ public class Combinations {
         System.out.println(combine(1, 1));
         System.out.println(combine(2, 1));
         System.out.println(combine(3, 2));
+
+        System.out.println(combine(10, 3));
+        System.out.println(combine(5, 3));
     }
 
 
